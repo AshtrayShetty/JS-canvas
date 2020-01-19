@@ -4,9 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet">
+    <title>JS Canvas</title>
 </head>
 <body>
-    
+    <div>
+        <nav>
+            <ul>
+                <li>File</li>
+                <li>Edit</li>
+                <li>View</li>
+                <li>Image</li>
+                <li>Colors</li>
+                <li>Help</li>
+            </ul>
+        </nav>
+    </div>
+    <div id="sidebar">
+        <div id="buttons">
+            <button><i class="far fa-hand-paper"></i></button>
+            <button><i class="fas fa-mouse-pointer"></i></button>
+            <button><i class="fas fa-eraser"></i></button>
+            <button><i class="fas fa-fill-drip"></i></button>
+            <button><i class="fas fa-eye-dropper"></i></button>
+            <button><i class="fas fa-search"></i></button>
+            <button><i class="fas fa-pencil-alt"></i></button>
+            <button><i class="fas fa-paint-brush"></i></button>
+            <button><i class="fas fa-spray-can"></i></button>
+            <button><i class="fas fa-font"></i></button>
+            <button><i class="fas fa-slash"></i></button>
+            <button><img src="./images/curve.png" alt=""></button>
+            <button><img src="./images/rectangle.png" alt=""></button>
+            <button><i class="fas fa-draw-polygon"></i></button>
+            <button><i class="far fa-circle"></i></button>
+            <button><i class="far fa-square"></i></button>
+        </div>
+        <div id="color-select"></div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script src="./js/canvas.js"></script>
+    <script src="https://kit.fontawesome.com/21641d8459.js" crossorigin="anonymous"></script>
 </body>
 </html>

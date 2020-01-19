@@ -1,0 +1,73 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+div{
+    background-color: #bbc6c9;
+    height: 25px;
+    font-family: 'Dosis', sans-serif;
+    border-bottom: 1px outset #bbc6c9;
+}
+
+ul{
+    list-style: none;
+    display: flex;
+    flex: 1;
+    padding-top: 3px;
+    margin-left: 10px;
+}
+
+li{
+    width: 60px;
+    float: left;
+    cursor: pointer;
+    text-align: center;
+}
+
+button{
+    width: 50%;
+    height: 30px;
+    border: 1px outset;
+    background-color: #bbc6c9;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 1px 1px black;
+}
+
+img{
+    width: 20px;
+}
+
+canvas{
+    position: absolute;
+    top: 25px;
+    left: 70px;
+}
+
+#sidebar{
+    height: 70vh;
+    width: 70px;
+    border-right: 1px outset #bbc6c9;
+    padding-top: 20px;
+}
+
+#buttons{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#color-select{
+    height: 80px;
+    width: 50px;
+    position: relative;
+    top: 250px;
+    left: 10px;
+    border-bottom: 1px solid rgb(230, 228, 228);
+    border-right: 1px solid rgb(230, 228, 228);
+    border-left: 1.5px solid rgb(177, 177, 177);
+    border-top: 1.5px solid rgb(177, 177, 177);
+}
