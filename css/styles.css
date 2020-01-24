@@ -44,13 +44,33 @@ canvas{
     position: absolute;
     top: 25px;
     left: 70px;
+    /* background-color: black; */
+    /* width: 80%; */
 }
 
+button.color{
+    position: relative;
+    background-color: blue;
+    height: 15px;
+    width: 15px;
+    border: 0.5px inset #e3e6e7;
+}
+
+.pressed{
+    height: 40px;
+    width: 40px;
+    border: 1px inset white;
+    background-color: #e3e6e7;
+    margin-left: 28px;
+    margin-top: 15px;
+}   
+
 #sidebar{
-    height: 70vh;
+    height: 81vh;
     width: 70px;
     border-right: 1px outset #bbc6c9;
     padding-top: 20px;
+    border-top: 1px outset #eaedee;
 }
 
 #buttons{
@@ -70,4 +90,38 @@ canvas{
     border-right: 1px solid rgb(230, 228, 228);
     border-left: 1.5px solid rgb(177, 177, 177);
     border-top: 1.5px solid rgb(177, 177, 177);
+}
+
+#bottom{
+    position: relative;
+    top: 0;
+    height: 75px;
+    border-top: 1px outset #eaedee;
+    display: flex;
+}
+
+#foreground{
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    top: 3px;
+    z-index: 2;
+    border: 1px solid #e3e6e7; 
+}
+
+#background{
+    height: 18px;
+    width: 18px;
+    left: 12px;
+    bottom: 7px;
+    border: 1px solid #e3e6e7;
+}
+
+#color-palette{
+    width: 260px;
+    height: 40px;
+    /* border: 1px inset white; */
+    /* background-color: #e3e6e7; */
+    margin-left: 3px;
+    margin-top: 15px;
 }
