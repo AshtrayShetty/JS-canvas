@@ -50,7 +50,6 @@ canvas{
 
 button.color{
     position: relative;
-    background-color: blue;
     height: 15px;
     width: 15px;
     border: 0.5px inset #e3e6e7;
@@ -101,6 +100,7 @@ button.color{
 }
 
 #foreground{
+    position: relative;
     height: 18px;
     width: 18px;
     left: 4px;
@@ -110,6 +110,7 @@ button.color{
 }
 
 #background{
+    position: relative;
     height: 18px;
     width: 18px;
     left: 12px;
@@ -120,8 +121,27 @@ button.color{
 #color-palette{
     width: 260px;
     height: 40px;
-    /* border: 1px inset white; */
-    /* background-color: #e3e6e7; */
     margin-left: 3px;
     margin-top: 15px;
+}
+
+#status-bar{
+    display: flex;
+}
+
+#status-bar div{
+    height: 23px;
+    margin: 1px;
+    border-top: 2px inset rgb(177, 177, 177);
+    border-bottom: 2px inset rgb(177, 177, 177);
+    border-left: 2px inset white;
+    border-right: 2px inset white;
+}
+
+#description{
+    width: 50%;
+}
+
+#cursor-pos, #draw-size{
+    width: 25%;
 }
