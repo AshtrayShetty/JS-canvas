@@ -13,8 +13,6 @@ div{
 
 ul{
     list-style: none;
-    display: flex;
-    flex: 1;
     padding-top: 3px;
     margin-left: 10px;
 }
@@ -42,10 +40,9 @@ img{
 
 canvas{
     position: absolute;
-    top: 25px;
+    bottom: 100px;
     left: 70px;
     /* background-color: black; */
-    /* width: 80%; */
 }
 
 button.color{
@@ -53,6 +50,32 @@ button.color{
     height: 15px;
     width: 15px;
     border: 0.5px inset #e3e6e7;
+}
+
+ul.menu{
+    display: flex;
+    /* visibility: hidden; */
+    flex-direction: column;
+    width: 130px;
+    padding: 5px;
+    margin-top: 2px;
+    background-color: #bbc6c9;
+}
+
+ul.menu li{
+    float: none;
+    width: 120px;
+    text-align: left;
+    padding-left: 30px;
+}
+
+ul.menu li:hover{
+    background-color: navy;
+}
+
+ul.menu a{
+    text-decoration: none;
+    color: black;
 }
 
 .pressed{
@@ -144,4 +167,9 @@ button.color{
 
 #cursor-pos, #draw-size{
     width: 25%;
+}
+
+#main-menu{
+    display: flex;
+    flex: 1;
 }
