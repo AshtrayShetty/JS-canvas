@@ -17,6 +17,11 @@ ul{
     margin-left: 10px;
 }
 
+ul div{
+    height: 22px;
+    width: 50px;
+}
+
 li{
     width: 60px;
     float: left;
@@ -54,23 +59,24 @@ button.color{
 
 ul.menu{
     display: flex;
-    /* visibility: hidden; */
+    visibility: hidden;
     flex-direction: column;
-    width: 130px;
+    width: 140px;
     padding: 5px;
-    margin-top: 2px;
     background-color: #bbc6c9;
+    position: relative;
 }
 
-ul.menu li{
+ul.menu a li{
     float: none;
-    width: 120px;
+    width: 130px;
     text-align: left;
     padding-left: 30px;
 }
 
-ul.menu li:hover{
+ul.menu a:hover{
     background-color: navy;
+    color: white;
 }
 
 ul.menu a{
@@ -85,7 +91,12 @@ ul.menu a{
     background-color: #e3e6e7;
     margin-left: 28px;
     margin-top: 15px;
-}   
+}
+
+.active{
+    border: 1px inset white;
+    background-color: #e3e6e7;
+}
 
 #sidebar{
     height: 81vh;
