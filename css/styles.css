@@ -173,11 +173,12 @@ ul.menu a{
 }
 
 #description{
-    width: 50%;
+    width: 80%;
 }
 
 #cursor-pos, #draw-size{
-    width: 25%;
+    width: 10%;
+    text-align: right;
 }
 
 #main-menu{
