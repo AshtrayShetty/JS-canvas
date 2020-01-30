@@ -45,9 +45,14 @@ img{
 
 canvas{
     position: absolute;
-    bottom: 100px;
+    top: 25px;
     left: 70px;
+    z-index: -99;
     /* background-color: black; */
+}
+
+span{
+    text-decoration: underline;
 }
 
 button.color{
@@ -65,6 +70,7 @@ ul.menu{
     padding: 5px;
     background-color: #bbc6c9;
     position: relative;
+    border: 1px outset #818283;
 }
 
 ul.menu a li{
@@ -82,6 +88,11 @@ ul.menu a:hover{
 ul.menu a{
     text-decoration: none;
     color: black;
+}
+
+button.btn-pressed{
+    border: 1px inset white;
+    background-color: #e3e6e7;
 }
 
 .pressed{
