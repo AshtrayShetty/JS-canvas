@@ -34,3 +34,21 @@ const func_buttons=[...document.querySelectorAll("#buttons button")];
 func_buttons.forEach(button=>{
     button.addEventListener('click', ()=>{button.classList.toggle('btn-pressed');});
 });
+
+let back_fore_color=document.getElementById('foreground');
+const back_fore=document.querySelectorAll('.pressed button');
+back_fore.forEach(b_f=>{
+    b_f.addEventListener('click', ()=>{
+        back_fore_color=b_f;
+        document.getElementById('color-select').style.backgroundColor=b_f.style.backgroundColor;
+    });
+});
+
+const color_change=document.querySelectorAll(".color");
+color_change.forEach(color=>{
+    color.addEventListener('click', ()=>{
+        let col=color.style.backgroundColor;
+        document.getElementById('color-select').style.backgroundColor=col;
+        back_fore_color.style.backgroundColor=col;
+    });
+});
