@@ -29,3 +29,8 @@ menu_items.forEach(item=>{
 window.addEventListener('mousemove', function(e){
     document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`;
 });
+
+const func_buttons=[...document.querySelectorAll("#buttons button")];
+func_buttons.forEach(button=>{
+    button.addEventListener('click', ()=>{button.classList.toggle('btn-pressed');});
+});
