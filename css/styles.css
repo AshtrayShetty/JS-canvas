@@ -90,7 +90,7 @@ ul.menu a{
     color: black;
 }
 
-button.btn-pressed{
+#btn-pressed{
     border: 1px inset white;
     background-color: #e3e6e7;
 }

@@ -1,13 +1,3 @@
-let canvas=document.getElementById('canvas');
-if(canvas.getContext){
-    let ctx=canvas.getContext('2d');
-    ctx.fillStyle="rgb(200, 0, 0)";
-    ctx.fillRect(10, 10, 50, 50);
-
-    ctx.fillStyle='rgba(0, 0, 200, 0.5)';
-    ctx.fillRect(30, 30, 50, 50);
-}
-
 const menu_items=[...document.querySelectorAll('#main-menu > div')];
 const sub_item_list=[...document.querySelectorAll('ul.menu')];
 let visible_menu=[];
@@ -30,11 +20,6 @@ window.addEventListener('mousemove', function(e){
     document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`;
 });
 
-const func_buttons=[...document.querySelectorAll("#buttons button")];
-func_buttons.forEach(button=>{
-    button.addEventListener('click', ()=>{button.classList.toggle('btn-pressed');});
-});
-
 let back_fore_color=document.getElementById('foreground');
 const back_fore=document.querySelectorAll('.pressed button');
 back_fore.forEach(b_f=>{
@@ -50,5 +35,29 @@ color_change.forEach(color=>{
         let col=color.style.backgroundColor;
         document.getElementById('color-select').style.backgroundColor=col;
         back_fore_color.style.backgroundColor=col;
+    });
+});
+
+const func_buttons=[...document.querySelectorAll("#buttons button")];
+func_buttons.forEach(button=>{
+    button.addEventListener('click', ()=>{
+        let script=undefined;
+        if(button['id']!==''){
+            button['id']='';
+            if(script!==undefined){document.body.removeChild(script);}
+        }
+        else{
+            func_buttons.map(button=>button['id']='');
+            button['id']='btn-pressed';
+            if(button.firstElementChild.classList.contains('fa-pencil-alt')){
+                if(button['id']==='btn-pressed'){
+                    script=document.createElement('script');
+                    script.src="./js/pencil.js";
+                    document.body.appendChild(script);
+                }
+                // else if(script!==undefined){document.body.removeChild(script);}
+            }
+        }
+        console.log(script);
     });
 });
