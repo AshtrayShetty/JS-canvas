@@ -2,6 +2,13 @@ const canvas=document.getElementById('canvas');
 const ctx=canvas.getContext('2d');
 
 ctx.strokeStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+
+document.querySelectorAll('.color').forEach(color=>{
+    color.addEventListener('click', ()=>ctx.strokeStyle=`${color.style.backgroundColor}`);
+});
+
+document.getElementById('foreground').addEventListener('click', ()=>ctx.strokeStyle=`${document.getElementById('foreground').style.backgroundColor}`);
+
 ctx.lineCap='round';
 ctx.lineJoin='round';
 
@@ -16,7 +23,6 @@ let lastY=0;
 
 function draw(e){
     if(!isDrawing){return;}
-    console.log(e);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(e.offsetX, e.offsetY);
