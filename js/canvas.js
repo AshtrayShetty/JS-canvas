@@ -39,15 +39,15 @@ color_change.forEach(color=>{
 });
 
 const func_buttons=[...document.querySelectorAll("#buttons button")];
+
+let script=undefined;
 func_buttons.forEach(button=>{
+    
     button.addEventListener('click', ()=>{
-        let script=undefined;
-        if(button['id']!==''){
-            button['id']='';
-            if(script!==undefined){document.body.removeChild(script);}
-        }
-        else{
-            func_buttons.map(button=>button['id']='');
+        button.removeAttribute('id');
+        if(script!==undefined){document.body.removeChild(document.body.lastChild);}
+        if(button['id']!=='btn-pressed'){
+            func_buttons.map(button=>button.removeAttribute('id'));
             button['id']='btn-pressed';
             if(button.firstElementChild.classList.contains('fa-pencil-alt')){
                 if(button['id']==='btn-pressed'){
@@ -55,9 +55,7 @@ func_buttons.forEach(button=>{
                     script.src="./js/pencil.js";
                     document.body.appendChild(script);
                 }
-                // else if(script!==undefined){document.body.removeChild(script);}
             }
         }
-        console.log(script);
     });
 });
