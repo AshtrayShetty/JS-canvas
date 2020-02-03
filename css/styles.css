@@ -47,7 +47,6 @@ canvas{
     position: absolute;
     top: 25px;
     left: 70px;
-    z-index: -99;
     /* background-color: black; */
 }
 
@@ -71,6 +70,7 @@ ul.menu{
     background-color: #bbc6c9;
     position: relative;
     border: 1px outset #818283;
+    z-index: 99;
 }
 
 ul.menu a li{
