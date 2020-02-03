@@ -1,5 +1,6 @@
-const canvas=document.getElementById('canvas');
-const ctx=canvas.getContext('2d');
+while(document.getElementById('color-select').hasChildNodes()){
+    document.getElementById('color-select').removeChild(document.getElementById('color-select').firstElementChild);
+}
 
 ctx.strokeStyle=`${document.getElementById('foreground').style.backgroundColor}`;
 
@@ -14,12 +15,6 @@ ctx.lineJoin='round';
 
 // Increase width of line -> Use ctx.lineWidth 
 ctx.lineWidth=1;
-
-let isDrawing=false; //Tells if the mouse cursor is clicked or if the user is only hovering over the canvas
-
-// To keep track of where the start and stop positions of the stroke are
-let lastX=0;
-let lastY=0;
 
 function draw(e){
     if(!isDrawing){return;}
