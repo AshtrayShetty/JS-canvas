@@ -35,7 +35,6 @@ button{
     border: 1px outset;
     background-color: #bbc6c9;
     outline: none;
-    cursor: pointer;
     box-shadow: 1px 1px black;
 }
 
@@ -59,6 +58,15 @@ button.color{
     height: 15px;
     width: 15px;
     border: 0.5px inset #e3e6e7;
+}
+
+button.inner-div{
+    height: 14px;
+    width: 15px;
+    border: none;
+    box-shadow: none;
+    padding-bottom: 15px;
+    text-align: center;
 }
 
 ul.menu{
@@ -134,6 +142,8 @@ ul.menu a{
     border-right: 1px solid rgb(230, 228, 228);
     border-left: 1.5px solid rgb(177, 177, 177);
     border-top: 1.5px solid rgb(177, 177, 177);
+    display: flex;
+    flex-wrap: wrap;
 }
 
 #bottom{
@@ -195,4 +205,13 @@ ul.menu a{
 #main-menu{
     display: flex;
     flex: 1;
+}
+
+#btn-active{
+    background-color: navy;
+    color: white;
+}
+
+#btn-active i{
+    color: white;
 }
