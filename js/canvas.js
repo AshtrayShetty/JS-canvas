@@ -50,11 +50,11 @@ color_change.forEach(color=>{
 
 const func_buttons=[...document.querySelectorAll("#buttons button")];
 
-// let script=undefined;
 let color_select=document.getElementById('color-select');
 
 function draw(e){
     if(!isDrawing){return;}
+    ctx.clearRect(e.offsetX, e.offsetY, 0, 0);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(e.offsetX, e.offsetY);
@@ -78,11 +78,33 @@ func_buttons.forEach(button=>{
 
         while(color_select.hasChildNodes()){color_select.removeChild(color_select.firstElementChild);}
 
-        if(button.firstElementChild.classList.contains('fa-pencil-alt') && button['id']==='btn-pressed'){
+        if(button.firstElementChild.classList.contains('fa-eraser') && button['id']==='btn-pressed'){
+
+            ctx.lineWidth=10;
+            ctx.lineJoin='round';
+            ctx.strokeStyle='white';
+            ctx.lineCap='square';
+
+            document.addEventListener('keydown', (e)=>{
+                if(e.keyCode===107){++ctx.lineWidth;}
+                if(ctx.lineWidth!==0 && e.keyCode===109){--ctx.lineWidth;}
+            });
+
+            canvas.addEventListener('mousedown', (e)=>{
+                isDrawing=true;
+                [lastX, lastY]=[e.offsetX, e.offsetY];
+            });
+
+            canvas.addEventListener('mousemove', ()=>draw);
+            canvas.addEventListener('mouseout', ()=>isDrawing=false);
+            canvas.addEventListener('mouseup', ()=>isDrawing=false);
+
+        }else if(button.firstElementChild.classList.contains('fa-pencil-alt') && button['id']==='btn-pressed'){
+
             ctx.lineCap='round';
             ctx.lineJoin='round';
             ctx.lineWidth=1;
-            // console.log(ctx.strokeStyle);
+            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
@@ -94,80 +116,82 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mouseup', ()=>isDrawing=false);
 
         }else if(button.firstElementChild.classList.contains('fa-paint-brush') && button['id']==='btn-pressed'){
-            var round_button_l=document.createElement('button');
+
+            let round_button_l=document.createElement('button');
             round_button_l.classList.add('inner-div');
             round_button_l.innerHTML='<i class="fas fa-circle"></i>';
             color_select.appendChild(round_button_l);
 
-            var round_button_m=document.createElement('button');
+            let round_button_m=document.createElement('button');
             round_button_m.classList.add('inner-div');
             round_button_m.innerHTML='<i class="fas fa-circle fa-xs"></i>';
             color_select.appendChild(round_button_m);
 
-            var round_button_s=document.createElement('button');
+            let round_button_s=document.createElement('button');
             round_button_s.classList.add('inner-div');
             round_button_s.innerHTML='<i class="fas fa-circle fa-xs"></i>';
             color_select.appendChild(round_button_s);
 
-            var square_button_l=document.createElement('button');
+            let square_button_l=document.createElement('button');
             square_button_l.classList.add('inner-div');
             square_button_l.innerHTML='<i class="fas fa-square-full"></i>';
             color_select.appendChild(square_button_l);
 
-            var square_button_m=document.createElement('button');
+            let square_button_m=document.createElement('button');
             square_button_m.classList.add('inner-div');
             square_button_m.innerHTML='<i class="fas fa-square-full fa-xs"></i>';
             color_select.appendChild(square_button_m);
 
-            var square_button_s=document.createElement('button');
+            let square_button_s=document.createElement('button');
             square_button_s.classList.add('inner-div');
             square_button_s.innerHTML='<i class="fas fa-square-full fa-xs"></i>';
             color_select.appendChild(square_button_s);
 
-            var slash_button_l=document.createElement('button');
+            let slash_button_l=document.createElement('button');
             slash_button_l.classList.add('inner-div');
             slash_button_l.style.fontSize="19px";
             slash_button_l.innerHTML='/';
             color_select.appendChild(slash_button_l);
 
-            var slash_button_m=document.createElement('button');
+            let slash_button_m=document.createElement('button');
             slash_button_m.classList.add('inner-div');
             slash_button_m.style.fontSize="15px";
             slash_button_m.innerHTML='/';
             color_select.appendChild(slash_button_m);
 
-            var slash_button_s=document.createElement('button');
+            let slash_button_s=document.createElement('button');
             slash_button_s.classList.add('inner-div');
             slash_button_s.style.fontSize="11px";
             slash_button_s.innerHTML='/';
             color_select.appendChild(slash_button_s);
 
-            var bslash_button_l=document.createElement('button');
+            let bslash_button_l=document.createElement('button');
             bslash_button_l.classList.add('inner-div');
             bslash_button_l.style.fontSize="18px"
             bslash_button_l.innerHTML='\\';
             color_select.appendChild(bslash_button_l);
 
-            var bslash_button_m=document.createElement('button');
+            let bslash_button_m=document.createElement('button');
             bslash_button_m.classList.add('inner-div');
             bslash_button_m.style.fontSize="15px"
             bslash_button_m.innerHTML='\\';
             color_select.appendChild(bslash_button_m);
 
-            var bslash_button_s=document.createElement('button');
+            let bslash_button_s=document.createElement('button');
             bslash_button_s.classList.add('inner-div');
             bslash_button_s.style.fontSize="11px"
             bslash_button_s.innerHTML='\\';
             color_select.appendChild(bslash_button_s);
 
             // let pattern;
+            ctx.lineWidth=0;
 
-            var button_list=[...document.querySelectorAll('.inner-div')];
+            let button_list=[...document.querySelectorAll('.inner-div')];
             button_list.forEach(button=>{
                 button.addEventListener('click', ()=>{
                     button_list.map(button=>button.removeAttribute('id'));
                     button['id']='btn-active';
-                    ctx.lineWidth=0;
+                    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
 
                     canvas.addEventListener('mousedown', (e)=>{
                         isDrawing=true;
@@ -252,29 +276,7 @@ func_buttons.forEach(button=>{
                 });
             });
 
+        }else{canvas.addEventListener('mousedown', ()=>isDrawing=false);}
 
-        }
-        
-        
-        else{canvas.addEventListener('mousedown', ()=>isDrawing=false);}       
     });
 });
-
-// if(script!==undefined){document.body.removeChild(document.body.lastChild);}
-        // if(button['id']!=='btn-pressed'){
-        //     func_buttons.map(button=>button.removeAttribute('id'));
-        //     button['id']='btn-pressed';
-        //     if(button.firstElementChild.classList.contains('fa-pencil-alt')){
-        //         if(button['id']==='btn-pressed'){
-        //             script=document.createElement('script');
-        //             script.src="./js/pencil.js";
-        //             document.body.appendChild(script);
-        //         }
-        //     }else if(button.firstElementChild.classList.contains('fa-paint-brush')){
-        //         if(button['id']==='btn-pressed'){
-        //             script=document.createElement('script');
-        //             script.src="./js/brush.js";
-        //             document.body.appendChild(script);
-        //         }
-        //     }
-        // }else{button.removeAttribute('id');}
