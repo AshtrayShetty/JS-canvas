@@ -63,6 +63,9 @@ function draw(e){
 }
 
 let pressed=null;
+let isErase=false;
+let width=10;
+
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
 func_buttons.forEach(button=>{
     button.addEventListener('click', ()=>{
@@ -80,24 +83,24 @@ func_buttons.forEach(button=>{
 
         if(button.firstElementChild.classList.contains('fa-eraser') && button['id']==='btn-pressed'){
 
-            ctx.lineWidth=10;
-            ctx.lineJoin='round';
-            ctx.strokeStyle='white';
-            ctx.lineCap='square';
-
             document.addEventListener('keydown', (e)=>{
-                if(e.keyCode===107){++ctx.lineWidth;}
-                if(ctx.lineWidth!==0 && e.keyCode===109){--ctx.lineWidth;}
+                if(e.keyCode===107){++width;}
+                if(ctx.lineWidth!==0 && e.keyCode===109){--width;}
             });
 
             canvas.addEventListener('mousedown', (e)=>{
-                isDrawing=true;
+                isDrawing=false;
+                isErase=true;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
-            canvas.addEventListener('mousemove', ()=>draw);
-            canvas.addEventListener('mouseout', ()=>isDrawing=false);
-            canvas.addEventListener('mouseup', ()=>isDrawing=false);
+            canvas.addEventListener('mousemove', (e)=>{
+                if(!isErase){return;}
+                ctx.clearRect(e.offsetX, e.offsetY, width, width);
+            });
+
+            canvas.addEventListener('mouseout', ()=>isErase=false);
+            canvas.addEventListener('mouseup', ()=>isErase=false);
 
         }else if(button.firstElementChild.classList.contains('fa-pencil-alt') && button['id']==='btn-pressed'){
 
@@ -108,6 +111,7 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
+                isErase=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -195,6 +199,7 @@ func_buttons.forEach(button=>{
 
                     canvas.addEventListener('mousedown', (e)=>{
                         isDrawing=true;
+                        isErase=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
         
