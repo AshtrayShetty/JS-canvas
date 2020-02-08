@@ -34,8 +34,8 @@ let back_fore_color=document.getElementById('foreground');
 const back_fore=document.querySelectorAll('.pressed button');
 back_fore.forEach(b_f=>{
     b_f.addEventListener('click', ()=>{
-        back_fore_color=b_f;
-        document.getElementById('color-select').style.backgroundColor=b_f.style.backgroundColor;
+        back_fore_color=b_f
+        ctx.strokeStyle=back_fore_color.style.backgroundColor;
     });
 });
 
@@ -44,31 +44,237 @@ color_change.forEach(color=>{
     color.addEventListener('click', ()=>{
         let col=color.style.backgroundColor;
         back_fore_color.style.backgroundColor=col;
+        ctx.strokeStyle=col;
     });
 });
 
 const func_buttons=[...document.querySelectorAll("#buttons button")];
 
-let script=undefined;
+// let script=undefined;
+let color_select=document.getElementById('color-select');
+
+function draw(e){
+    if(!isDrawing){return;}
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    [lastX, lastY]=[e.offsetX, e.offsetY];
+}
+
+let pressed=null;
+ctx.strokeStyle=back_fore_color.style.backgroundColor;
 func_buttons.forEach(button=>{
     button.addEventListener('click', ()=>{
-        if(script!==undefined){document.body.removeChild(document.body.lastChild);}
-        if(button['id']!=='btn-pressed'){
+
+        if(button.firstChild===pressed){
+            pressed=null;
+            button.removeAttribute('id');
+        }else{
+            pressed=button.firstChild;
             func_buttons.map(button=>button.removeAttribute('id'));
             button['id']='btn-pressed';
-            if(button.firstElementChild.classList.contains('fa-pencil-alt')){
-                if(button['id']==='btn-pressed'){
-                    script=document.createElement('script');
-                    script.src="./js/pencil.js";
-                    document.body.appendChild(script);
-                }
-            }else if(button.firstElementChild.classList.contains('fa-paint-brush')){
-                if(button['id']==='btn-pressed'){
-                    script=document.createElement('script');
-                    script.src="./js/brush.js";
-                    document.body.appendChild(script);
-                }
-            }
-        }else{button.removeAttribute('id');}
+        }
+
+        while(color_select.hasChildNodes()){color_select.removeChild(color_select.firstElementChild);}
+
+        if(button.firstElementChild.classList.contains('fa-pencil-alt') && button['id']==='btn-pressed'){
+            ctx.lineCap='round';
+            ctx.lineJoin='round';
+            ctx.lineWidth=1;
+            // console.log(ctx.strokeStyle);
+
+            canvas.addEventListener('mousedown', (e)=>{
+                isDrawing=true;
+                [lastX, lastY]=[e.offsetX, e.offsetY];
+            });
+
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseout', ()=>isDrawing=false);
+            canvas.addEventListener('mouseup', ()=>isDrawing=false);
+
+        }else if(button.firstElementChild.classList.contains('fa-paint-brush') && button['id']==='btn-pressed'){
+            var round_button_l=document.createElement('button');
+            round_button_l.classList.add('inner-div');
+            round_button_l.innerHTML='<i class="fas fa-circle"></i>';
+            color_select.appendChild(round_button_l);
+
+            var round_button_m=document.createElement('button');
+            round_button_m.classList.add('inner-div');
+            round_button_m.innerHTML='<i class="fas fa-circle fa-xs"></i>';
+            color_select.appendChild(round_button_m);
+
+            var round_button_s=document.createElement('button');
+            round_button_s.classList.add('inner-div');
+            round_button_s.innerHTML='<i class="fas fa-circle fa-xs"></i>';
+            color_select.appendChild(round_button_s);
+
+            var square_button_l=document.createElement('button');
+            square_button_l.classList.add('inner-div');
+            square_button_l.innerHTML='<i class="fas fa-square-full"></i>';
+            color_select.appendChild(square_button_l);
+
+            var square_button_m=document.createElement('button');
+            square_button_m.classList.add('inner-div');
+            square_button_m.innerHTML='<i class="fas fa-square-full fa-xs"></i>';
+            color_select.appendChild(square_button_m);
+
+            var square_button_s=document.createElement('button');
+            square_button_s.classList.add('inner-div');
+            square_button_s.innerHTML='<i class="fas fa-square-full fa-xs"></i>';
+            color_select.appendChild(square_button_s);
+
+            var slash_button_l=document.createElement('button');
+            slash_button_l.classList.add('inner-div');
+            slash_button_l.style.fontSize="19px";
+            slash_button_l.innerHTML='/';
+            color_select.appendChild(slash_button_l);
+
+            var slash_button_m=document.createElement('button');
+            slash_button_m.classList.add('inner-div');
+            slash_button_m.style.fontSize="15px";
+            slash_button_m.innerHTML='/';
+            color_select.appendChild(slash_button_m);
+
+            var slash_button_s=document.createElement('button');
+            slash_button_s.classList.add('inner-div');
+            slash_button_s.style.fontSize="11px";
+            slash_button_s.innerHTML='/';
+            color_select.appendChild(slash_button_s);
+
+            var bslash_button_l=document.createElement('button');
+            bslash_button_l.classList.add('inner-div');
+            bslash_button_l.style.fontSize="18px"
+            bslash_button_l.innerHTML='\\';
+            color_select.appendChild(bslash_button_l);
+
+            var bslash_button_m=document.createElement('button');
+            bslash_button_m.classList.add('inner-div');
+            bslash_button_m.style.fontSize="15px"
+            bslash_button_m.innerHTML='\\';
+            color_select.appendChild(bslash_button_m);
+
+            var bslash_button_s=document.createElement('button');
+            bslash_button_s.classList.add('inner-div');
+            bslash_button_s.style.fontSize="11px"
+            bslash_button_s.innerHTML='\\';
+            color_select.appendChild(bslash_button_s);
+
+            // let pattern;
+
+            var button_list=[...document.querySelectorAll('.inner-div')];
+            button_list.forEach(button=>{
+                button.addEventListener('click', ()=>{
+                    button_list.map(button=>button.removeAttribute('id'));
+                    button['id']='btn-active';
+                    ctx.lineWidth=0;
+
+                    canvas.addEventListener('mousedown', (e)=>{
+                        isDrawing=true;
+                        [lastX, lastY]=[e.offsetX, e.offsetY];
+                    });
+        
+                    canvas.addEventListener('mousemove', draw);
+                    canvas.addEventListener('mouseout', ()=>isDrawing=false);
+                    canvas.addEventListener('mouseup', ()=>isDrawing=false);
+
+                    if(button===button_list[0]){
+                        ctx.lineWidth=10;
+                        ctx.lineJoin='round';
+                        ctx.lineCap='round';
+
+                    }else if(button===button_list[1]){
+                        ctx.lineWidth=7;
+                        ctx.lineJoin='round';
+                        ctx.lineCap='round';
+
+                    }else if(button===button_list[2]){
+                        ctx.lineWidth=2;
+                        ctx.lineJoin='round';
+                        ctx.lineCap='round';
+
+                    }else if(button===button_list[3]){
+                        ctx.lineWidth=10;
+                        ctx.lineJoin='bevel';
+                        ctx.lineCap='square';
+
+                    }else if(button===button_list[4]){
+                        ctx.lineWidth=7;
+                        ctx.lineJoin='bevel';
+                        ctx.lineCap='square';
+
+                    }else if(button===button_list[5]){
+                        ctx.lineWidth=2;
+                        ctx.lineJoin='bevel';
+                        ctx.lineCap='square';
+
+                    }else if(button===button_list[6]){
+                        // let image=document.createElement('img');
+                        // image.src="./images/forward-slash.png";
+                        // pattern=ctx.createPattern(image, "repeat");
+                        // ctx.strokeStyle=pattern;
+                        ctx.lineWidth=10;
+                        ctx.lineJoin='mitter';
+                        ctx.lineCap='butt';
+                        ctx.stroke();
+
+                    }else if(button===button_list[7]){
+                        ctx.strokeStyle='/';
+                        ctx.lineWidth=7;
+                        ctx.lineJoin='mitter';
+                        ctx.lineCap='butt';
+
+                    }else if(button===button_list[8]){
+                        ctx.strokeStyle='/';
+                        ctx.lineWidth=2;
+                        ctx.lineJoin='mitter';
+                        ctx.lineCap='butt';
+                        
+                    }else if(button===button_list[9]){
+                        ctx.strokeStyle='\\';
+                        ctx.lineWidth=10;
+                        ctx.lineJoin='mitter';
+                        ctx.lineCap='butt';
+                        
+                    }else if(button===button_list[10]){
+                        ctx.strokeStyle='\\';
+                        ctx.lineWidth=7;
+                        ctx.lineJoin='mitter';
+                        ctx.lineCap='butt';
+                        
+                    }else if(button===button_list[11]){
+                        ctx.strokeStyle='\\';
+                        ctx.lineWidth=2;
+                        ctx.lineJoin='mitter';
+                        ctx.lineCap='butt';
+                        
+                    }
+                });
+            });
+
+
+        }
+        
+        
+        else{canvas.addEventListener('mousedown', ()=>isDrawing=false);}       
     });
 });
+
+// if(script!==undefined){document.body.removeChild(document.body.lastChild);}
+        // if(button['id']!=='btn-pressed'){
+        //     func_buttons.map(button=>button.removeAttribute('id'));
+        //     button['id']='btn-pressed';
+        //     if(button.firstElementChild.classList.contains('fa-pencil-alt')){
+        //         if(button['id']==='btn-pressed'){
+        //             script=document.createElement('script');
+        //             script.src="./js/pencil.js";
+        //             document.body.appendChild(script);
+        //         }
+        //     }else if(button.firstElementChild.classList.contains('fa-paint-brush')){
+        //         if(button['id']==='btn-pressed'){
+        //             script=document.createElement('script');
+        //             script.src="./js/brush.js";
+        //             document.body.appendChild(script);
+        //         }
+        //     }
+        // }else{button.removeAttribute('id');}
