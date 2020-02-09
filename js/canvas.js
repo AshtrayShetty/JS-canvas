@@ -281,7 +281,12 @@ func_buttons.forEach(button=>{
                 });
             });
 
-        }else{canvas.addEventListener('mousedown', ()=>isDrawing=false);}
+        }else{
+            canvas.addEventListener('mousedown', ()=>{
+                isDrawing=false;
+                isErase=false;
+            });
+        }
 
     });
 });
