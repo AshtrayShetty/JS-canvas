@@ -54,7 +54,6 @@ let color_select=document.getElementById('color-select');
 
 function draw(e){
     if(!isDrawing){return;}
-    ctx.clearRect(e.offsetX, e.offsetY, 0, 0);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(e.offsetX, e.offsetY);
@@ -79,13 +78,14 @@ func_buttons.forEach(button=>{
             button['id']='btn-pressed';
         }
 
+        isDrawing=false;
         while(color_select.hasChildNodes()){color_select.removeChild(color_select.firstElementChild);}
 
-        if(button.firstElementChild.classList.contains('fa-eraser') && button['id']==='btn-pressed'){
+        if(button['title']==='Eraser/Color Eraser' && button['id']==='btn-pressed'){
 
             document.addEventListener('keydown', (e)=>{
                 if(e.keyCode===107){++width;}
-                if(ctx.lineWidth!==0 && e.keyCode===109){--width;}
+                if(width!==3 && e.keyCode===109){--width;}
             });
 
             canvas.addEventListener('mousedown', (e)=>{
@@ -102,7 +102,7 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mouseout', ()=>isErase=false);
             canvas.addEventListener('mouseup', ()=>isErase=false);
 
-        }else if(button.firstElementChild.classList.contains('fa-pencil-alt') && button['id']==='btn-pressed'){
+        }else if(button['title']==='Pencil' && button['id']==='btn-pressed'){
 
             ctx.lineCap='round';
             ctx.lineJoin='round';
@@ -115,11 +115,11 @@ func_buttons.forEach(button=>{
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
-            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mousemove', draw, true);
             canvas.addEventListener('mouseout', ()=>isDrawing=false);
             canvas.addEventListener('mouseup', ()=>isDrawing=false);
 
-        }else if(button.firstElementChild.classList.contains('fa-paint-brush') && button['id']==='btn-pressed'){
+        }else if(button['title']==='Brush' && button['id']==='btn-pressed'){
 
             let round_button_l=document.createElement('button');
             round_button_l.classList.add('inner-div');
@@ -191,6 +191,7 @@ func_buttons.forEach(button=>{
             ctx.lineWidth=0;
 
             let button_list=[...document.querySelectorAll('.inner-div')];
+
             button_list.forEach(button=>{
                 button.addEventListener('click', ()=>{
                     button_list.map(button=>button.removeAttribute('id'));
@@ -202,8 +203,8 @@ func_buttons.forEach(button=>{
                         isErase=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
-        
-                    canvas.addEventListener('mousemove', draw);
+
+                    canvas.addEventListener('mousemove', draw, true);
                     canvas.addEventListener('mouseout', ()=>isDrawing=false);
                     canvas.addEventListener('mouseup', ()=>isDrawing=false);
 
@@ -258,28 +259,45 @@ func_buttons.forEach(button=>{
                         ctx.lineWidth=2;
                         ctx.lineJoin='mitter';
                         ctx.lineCap='butt';
-                        
+
                     }else if(button===button_list[9]){
                         ctx.strokeStyle='\\';
                         ctx.lineWidth=10;
                         ctx.lineJoin='mitter';
                         ctx.lineCap='butt';
-                        
+
                     }else if(button===button_list[10]){
                         ctx.strokeStyle='\\';
                         ctx.lineWidth=7;
                         ctx.lineJoin='mitter';
                         ctx.lineCap='butt';
-                        
+
                     }else if(button===button_list[11]){
                         ctx.strokeStyle='\\';
                         ctx.lineWidth=2;
                         ctx.lineJoin='mitter';
                         ctx.lineCap='butt';
-                        
+
                     }
                 });
             });
+
+        }else if(button['title']==='Line' && button['id']==='btn-pressed'){
+            
+            ctx.lineCap='round';
+            ctx.lineJoin='round';
+            ctx.lineWidth=1;
+            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+
+            canvas.addEventListener('mousedown', (e)=>{
+                isDrawing=true;
+                isErase=false;
+                [lastX, lastY]=[e.offsetX, e.offsetY];
+            });
+
+            canvas.removeEventListener('mousemove', draw, true);
+            canvas.addEventListener('mouseout', ()=>isDrawing=false);
+            canvas.addEventListener('mouseup', draw);
 
         }else{
             canvas.addEventListener('mousedown', ()=>{
