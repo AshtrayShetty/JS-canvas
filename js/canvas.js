@@ -61,6 +61,12 @@ function draw(e){
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
 
+function draw_rect(e){
+    if(!isDrawing){return;}
+    ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
+    [lastX, lastY]=[e.offsetX, e.offsetY];
+}
+
 let pressed=null;
 let isErase=false;
 let width=10;
@@ -189,6 +195,7 @@ func_buttons.forEach(button=>{
 
             // let pattern;
             ctx.lineWidth=0;
+            canvas.addEventListener('mousedown', ()=>isErase=false);
 
             let button_list=[...document.querySelectorAll('.inner-div')];
 
@@ -297,7 +304,88 @@ func_buttons.forEach(button=>{
 
             canvas.removeEventListener('mousemove', draw, true);
             canvas.addEventListener('mouseout', ()=>isDrawing=false);
-            canvas.addEventListener('mouseup', draw);
+            canvas.removeEventListener('mouseup', draw_rect, true);
+            canvas.addEventListener('mouseup', draw, true);
+
+        }else if(button['title']==='Rectangle' && button['id']==='btn-pressed'){
+
+            let rect_borderless=document.createElement('button');
+            rect_borderless.classList.add('inner-div');
+            rect_borderless.innerHTML="<img src='./images/rectangle.png'>";
+            rect_borderless.firstElementChild.style.width='38px';
+            rect_borderless.style.width='44px';
+            rect_borderless.firstElementChild.style.height='20px';
+            rect_borderless.style.marginLeft='5px';
+            color_select.appendChild(rect_borderless);
+
+            let rect_border=document.createElement('button');
+            rect_border.classList.add('inner-div');
+            rect_border.innerHTML="<img src='./images/border-rectangle.png'>";
+            rect_border.style.position='absolute';
+            rect_border.style.top='30px';
+            rect_border.style.left='5px';
+            rect_border.firstElementChild.style.width='38px';
+            rect_border.style.width='44px';
+            rect_border.firstElementChild.style.height='15px';
+            color_select.appendChild(rect_border);
+
+            let rect_fill=document.createElement('button');
+            rect_fill.classList.add('inner-div');
+            rect_fill.innerHTML="<img src='./images/fill-rectangle.png'>";
+            rect_fill.style.position='absolute';
+            rect_fill.style.top='57px';
+            rect_fill.style.left='5px';
+            rect_fill.firstElementChild.style.width='38px';
+            rect_fill.style.width='44px';
+            rect_fill.firstElementChild.style.height='15px';
+            color_select.appendChild(rect_fill);
+
+            let button_list=[...document.querySelectorAll('.inner-div')];
+
+            button_list.forEach(button=>{
+                button.addEventListener('click', ()=>{
+
+                    button_list.map(button=>button.removeAttribute('id'));
+                    button_list[0].innerHTML="<img src='./images/rectangle.png'>";
+                    button_list[0].firstElementChild.style.width='38px';
+                    button_list[0].firstElementChild.style.height='20px';
+                    button['id']='btn-active';
+
+                    canvas.removeEventListener('mousemove', draw, true);
+                    canvas.removeEventListener('mouseup', draw, true);
+
+                    if(button===button_list[0]){
+                        button.innerHTML="<img src='./images/white-border-rect.png'>";
+                        button.firstElementChild.style.width='38px';
+                        button.firstElementChild.style.height='20px';
+                        canvas.addEventListener('mousedown', (e)=>{
+                            isDrawing=true;
+                            isErase=false;
+                            [lastX, lastY]=[e.offsetX, e.offsetY];
+                            // [nextX, nextY]=[lastX, lastY];
+                            // ctx.save();
+                        });
+
+                        canvas.addEventListener('mouseout', ()=>isDrawing=false);
+                        canvas.addEventListener('mouseup', draw_rect, true);
+                    }
+
+                });
+
+            });
+            
+            ctx.lineWidth=1;
+            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+            // let [nextX, nextY]=[lastX, lastY];
+
+            // canvas.addEventListener('mousemove', (e)=>{
+            //     if(isDrawing){
+            //         ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
+            //         setTimeout(ctx.clearRect
+            //             )
+            //         [nextX, nextY]=[e.offsetX, e.offsetY];
+            //     }
+            // });
 
         }else{
             canvas.addEventListener('mousedown', ()=>{
