@@ -26,6 +26,12 @@ menu_items.forEach(item=>{
     });
 });
 
+canvas.addEventListener('click', ()=>{
+    let to_inactive=visible_menu.shift();
+    to_inactive.querySelector('li').classList.remove('active');
+    sub_item_list.map(sub_item=>sub_item.style.visibility="hidden");
+});
+
 window.addEventListener('mousemove', function(e){
     document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`;
 });
@@ -62,18 +68,22 @@ function draw(e){
 }
 
 function draw_rect(e){
-    if(!isDrawing){return;}
+    if(!isRect){return;}
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
 
 function draw_border_fill_rect(e){
-    if(!isDrawing){return;}
+    if(!isRect){return;}
     ctx.lineWidth=2;
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
     ctx.fillStyle="white";
-    if(e.offsetX<lastX || e.offsetY<lastY){
+    if(e.offsetX>lastX && e.offsetY<lastY){
+        ctx.fillRect(lastX+1, e.offsetY+1, Math.abs(e.offsetX-lastX-2), Math.abs(e.offsetY-lastY+2));
+    }else if(e.offsetX<lastX && e.offsetY<lastY){
         ctx.fillRect(e.offsetX+1, e.offsetY+1, Math.abs(e.offsetX-lastX+2), Math.abs(e.offsetY-lastY+2));
+    }else if(e.offsetX<lastX && e.offsetY>lastY){
+        ctx.fillRect(e.offsetX+1, lastY+1, Math.abs(e.offsetX-lastX+2), Math.abs(e.offsetY-lastY-2));
     }else{
         ctx.fillRect(lastX+1, lastY+1, e.offsetX-lastX-2, e.offsetY-lastY-2);
     }
@@ -81,15 +91,17 @@ function draw_border_fill_rect(e){
 }
 
 function draw_fill_rect(e){
-    if(!isDrawing){return;}
+    if(!isRect){return;}
     ctx.fillStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.fillRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
 
 let pressed=null;
-let isErase=false;
 let width=10;
+let isErase=false;
+let isRect=false;
+
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
 func_buttons.forEach(button=>{
@@ -116,6 +128,8 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=false;
+                // isLine=false;
+                isRect=false;
                 isErase=true;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
@@ -138,6 +152,7 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
                 isErase=false;
+                isRect=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -215,7 +230,11 @@ func_buttons.forEach(button=>{
 
             // let pattern;
             ctx.lineWidth=0;
-            canvas.addEventListener('mousedown', ()=>isErase=false);
+            canvas.addEventListener('mousedown', ()=>{
+                isErase=false;
+                // isLine=false;
+                isRect=false;
+            });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
 
@@ -228,14 +247,9 @@ func_buttons.forEach(button=>{
                     canvas.addEventListener('mousedown', (e)=>{
                         isDrawing=true;
                         isErase=false;
+                        isRect=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
-                        // draw(e);
                     });
-
-                    canvas.addEventListener('mousemove', draw, true);
-                    canvas.addEventListener('mouseout', ()=>isDrawing=false);
-                    canvas.removeEventListener('mouseup', draw_rect, true);
-                    canvas.addEventListener('mouseup', ()=>isDrawing=false);
 
                     if(button===button_list[0]){
                         ctx.lineWidth=10;
@@ -308,6 +322,11 @@ func_buttons.forEach(button=>{
                         ctx.lineCap='butt';
 
                     }
+
+                    canvas.addEventListener('mousemove', draw, true);
+                    canvas.addEventListener('mouseout', ()=>isDrawing=false);
+                    canvas.addEventListener('mouseup', ()=>isDrawing=false);
+
                 });
             });
 
@@ -326,15 +345,10 @@ func_buttons.forEach(button=>{
 
             canvas.removeEventListener('mousemove', draw, true);
             canvas.addEventListener('mouseout', ()=>isDrawing=false);
-            canvas.removeEventListener('mouseup', draw_rect, true);
-            canvas.removeEventListener('mouseup', draw_border_fill_rect, true);
-            canvas.removeEventListener('mouseup', draw_fill_rect, true);
             canvas.addEventListener('mouseup', draw, true);
 
         }else if(button['title']==='Rectangle' && button['id']==='btn-pressed'){
 
-            // let new_canvas=canvas.cloneNode(true);
-            // canvas.parentNode.replaceChild(new_canvas, canvas);
             let rect_borderless=document.createElement('button');
             rect_borderless.classList.add('inner-div');
             rect_borderless.innerHTML="<img src='./images/rectangle.png'>";
@@ -367,8 +381,6 @@ func_buttons.forEach(button=>{
             color_select.appendChild(rect_fill);
             
             let button_list=[...document.querySelectorAll('.inner-div')];
-            canvas.removeEventListener('mousemove', draw, true);
-            canvas.removeEventListener('mouseup', draw, true);
             
             button_list.forEach(button=>{
                 button.addEventListener('click', ()=>{
@@ -380,11 +392,12 @@ func_buttons.forEach(button=>{
                     button['id']='btn-active';
                     
                     canvas.addEventListener('mousedown', (e)=>{
-                        isDrawing=true;
+                        isRect=true;
+                        isDrawing=false;
                         isErase=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
-                    canvas.addEventListener('mouseout', ()=>isDrawing=false);
+                    canvas.addEventListener('mouseout', ()=>isRect=false);
                     
                     if(button===button_list[0]){
                         button.innerHTML="<img src='./images/white-border-rect.png'>";
@@ -404,7 +417,6 @@ func_buttons.forEach(button=>{
                         canvas.removeEventListener('mouseup', draw_border_fill_rect, true);
                         canvas.addEventListener('mouseup', draw_fill_rect, true);
                     }
-                    isDrawing=false;
 
                 });
 
@@ -417,6 +429,7 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
                 isErase=false;
+                isRect=false;
             });
         }
 
