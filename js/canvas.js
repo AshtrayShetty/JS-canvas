@@ -1,36 +1,9 @@
-const menu_items=[...document.querySelectorAll('#main-menu > div')];
-const sub_item_list=[...document.querySelectorAll('ul.menu')];
-let visible_menu=[];
-
 const canvas=document.getElementById('canvas');
 const ctx=canvas.getContext('2d');
-
-//Tells if the mouse cursor is clicked or if the user is only hovering over the canvas
-let isDrawing=false;
 
 // To keep track of where the start and stop positions of the stroke are
 let lastX=0;
 let lastY=0;
-
-menu_items.forEach(item=>{
-    item.querySelector('li').addEventListener('click', ()=>{
-        if(visible_menu.length!==0){
-            let to_hide=visible_menu.shift();
-            to_hide.querySelector('li').classList.remove('active');
-            to_hide.querySelector('ul.menu').style.visibility="hidden";
-            if(to_hide===item){return;}
-        }
-        sub_item_list[menu_items.indexOf(item)].style.visibility="visible";
-        visible_menu.push(menu_items[menu_items.indexOf(item)]);
-        item.querySelector('li').classList.add('active');
-    });
-});
-
-canvas.addEventListener('click', ()=>{
-    let to_inactive=visible_menu.shift();
-    to_inactive.querySelector('li').classList.remove('active');
-    sub_item_list.map(sub_item=>sub_item.style.visibility="hidden");
-});
 
 window.addEventListener('mousemove', function(e){
     document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`;
@@ -97,10 +70,23 @@ function draw_fill_rect(e){
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
 
+function draw_border_fill_ellipse(e){
+    if(!isEllipse){return;}
+    let x_center=e.offsetX<lastX?e.offsetX+(Math.abs(e.offsetX-lastX)/2):lastX+(Math.abs(e.offsetX-lastX)/2);
+    let y_center=e.offsetY<lastY?e.offsetY+(Math.abs(e.offsetY-lastY)/2):lastY+(Math.abs(e.offsetY-lastY)/2);
+    ctx.beginPath();
+    ctx.ellipse(x_center, y_center, Math.abs(e.offsetX-lastX), Math.abs(e.offsetY-lastY), 0, 0, 2*Math.PI);
+    ctx.stroke();
+}
+
 let pressed=null;
 let width=10;
+
+//Tells if the mouse cursor is clicked or if the user is only hovering over the canvas
+let isDrawing=false;
 let isErase=false;
 let isRect=false;
+let isEllipse=false;
 
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
@@ -131,6 +117,7 @@ func_buttons.forEach(button=>{
                 // isLine=false;
                 isRect=false;
                 isErase=true;
+                isEllipse=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -153,6 +140,7 @@ func_buttons.forEach(button=>{
                 isDrawing=true;
                 isErase=false;
                 isRect=false;
+                isEllipse=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -234,6 +222,7 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 // isLine=false;
                 isRect=false;
+                isEllipse=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -248,6 +237,7 @@ func_buttons.forEach(button=>{
                         isDrawing=true;
                         isErase=false;
                         isRect=false;
+                        isEllipse=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
 
@@ -340,6 +330,8 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
                 isErase=false;
+                isRect=false;
+                isEllipse=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -395,6 +387,7 @@ func_buttons.forEach(button=>{
                         isRect=true;
                         isDrawing=false;
                         isErase=false;
+                        isEllipse=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
                     canvas.addEventListener('mouseout', ()=>isRect=false);
@@ -425,6 +418,81 @@ func_buttons.forEach(button=>{
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
 
+        }else if(button['title']==='Ellipse' && button['id']==='btn-pressed'){
+            let ellipse_borderless=document.createElement('button');
+            ellipse_borderless.classList.add('inner-div');
+            ellipse_borderless.innerHTML="<img src='./images/ellipse_borderless.png'>";
+            ellipse_borderless.firstElementChild.style.width='34px';
+            ellipse_borderless.style.width='44px';
+            ellipse_borderless.firstElementChild.style.height='20px';
+            ellipse_borderless.style.marginLeft='2px';
+            color_select.appendChild(ellipse_borderless);
+
+            let ellipse_border=document.createElement('button');
+            ellipse_border.classList.add('inner-div');
+            ellipse_border.innerHTML="<img src='./images/ellipse_borderless.png'>";
+            ellipse_border.style.position='absolute';
+            ellipse_border.style.top='30px';
+            ellipse_border.style.left='2px';
+            ellipse_border.firstElementChild.style.width='34px';
+            ellipse_border.style.width='44px';
+            ellipse_border.firstElementChild.style.height='15px';
+            color_select.appendChild(ellipse_border);
+
+            let ellipse_fill=document.createElement('button');
+            ellipse_fill.classList.add('inner-div');
+            ellipse_fill.innerHTML="<img src='./images/ellipse_fill.png'>";
+            ellipse_fill.style.position='absolute';
+            ellipse_fill.style.top='57px';
+            ellipse_fill.style.left='2px';
+            ellipse_fill.firstElementChild.style.width='34px';
+            ellipse_fill.style.width='44px';
+            ellipse_fill.firstElementChild.style.height='15px';
+            color_select.appendChild(ellipse_fill);
+
+            let button_list=[...document.querySelectorAll('.inner-div')];
+
+            button_list.forEach(button=>{
+                button.addEventListener('click', ()=>{
+
+                    button_list.map(button=>button.removeAttribute('id'));
+                    button_list[0].innerHTML="<img src='./images/rectangle.png'>";
+                    button_list[0].firstElementChild.style.width='38px';
+                    button_list[0].firstElementChild.style.height='20px';
+                    button['id']='btn-active';
+                    
+                    canvas.addEventListener('mousedown', (e)=>{
+                        isEllipse=true;
+                        isRect=false;
+                        isDrawing=false;
+                        isErase=false;
+                        [lastX, lastY]=[e.offsetX, e.offsetY];
+                    });
+                    canvas.addEventListener('mouseout', ()=>isRect=false);
+                    
+                    if(button===button_list[0]){
+                        canvas.addEventListener('mouseup', draw_border_fill_ellipse, true);
+                    }
+                    // }else if(button===button_list[1]){
+                    //     canvas.removeEventListener('mouseup', draw_rect, true);
+                    //     canvas.removeEventListener('mouseup', draw_fill_rect, true);
+                    //     canvas.addEventListener('mouseup', draw_border_fill_rect, true);
+                        
+                    // }else if(button===button_list[2]){
+                    //     canvas.removeEventListener('mouseup', draw_rect, true);
+                    //     canvas.removeEventListener('mouseup', draw_border_fill_rect, true);
+                    //     canvas.addEventListener('mouseup', draw_fill_rect, true);
+                    // }
+
+                });
+
+            });
+            
+            ctx.lineWidth=1;
+            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+            // ctx.beginPath();
+            // ctx.ellipse(100, 100, 50, 50, 0, 0, 2 * Math.PI);
+            // ctx.stroke();
         }else{
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
