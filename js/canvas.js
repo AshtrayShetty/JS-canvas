@@ -70,13 +70,37 @@ function draw_fill_rect(e){
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
 
-function draw_border_fill_ellipse(e){
+function draw_ellipse(e){
     if(!isEllipse){return;}
     let x_center=e.offsetX<lastX?e.offsetX+(Math.abs(e.offsetX-lastX)/2):lastX+(Math.abs(e.offsetX-lastX)/2);
     let y_center=e.offsetY<lastY?e.offsetY+(Math.abs(e.offsetY-lastY)/2):lastY+(Math.abs(e.offsetY-lastY)/2);
+    ctx.lineWidth=2;
     ctx.beginPath();
     ctx.ellipse(x_center, y_center, Math.abs(e.offsetX-lastX), Math.abs(e.offsetY-lastY), 0, 0, 2*Math.PI);
     ctx.stroke();
+}
+
+function draw_border_fill_ellipse(e){
+    if(!isEllipse){return;}
+    draw_ellipse(e);
+    ctx.fillStyle="white";
+    let x_center=e.offsetX<lastX?e.offsetX+(Math.abs(e.offsetX-lastX)/2):lastX+(Math.abs(e.offsetX-lastX)/2);
+    let y_center=e.offsetY<lastY?e.offsetY+(Math.abs(e.offsetY-lastY)/2):lastY+(Math.abs(e.offsetY-lastY)/2);
+    ctx.beginPath();
+    let x_radius=e.offsetX<lastX?Math.abs(e.offsetX-lastX+1):Math.abs(e.offsetX-lastX-1);
+    let y_radius=e.offsetY<lastY?Math.abs(e.offsetY-lastY+1):Math.abs(e.offsetY-lastY-1);
+    ctx.ellipse(x_center, y_center, x_radius, y_radius, 0, 0, 2*Math.PI);
+    ctx.fill();
+}
+
+function draw_fill_ellipse(e){
+    if(!isEllipse){return;}
+    let x_center=e.offsetX<lastX?e.offsetX+(Math.abs(e.offsetX-lastX)/2):lastX+(Math.abs(e.offsetX-lastX)/2);
+    let y_center=e.offsetY<lastY?e.offsetY+(Math.abs(e.offsetY-lastY)/2):lastY+(Math.abs(e.offsetY-lastY)/2);
+    ctx.fillStyle=document.getElementById('foreground').style.backgroundColor;
+    ctx.beginPath();
+    ctx.ellipse(x_center, y_center, Math.abs(e.offsetX-lastX), Math.abs(e.offsetY-lastY), 0, 0, 2*Math.PI);
+    ctx.fill();
 }
 
 let pressed=null;
@@ -114,7 +138,6 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=false;
-                // isLine=false;
                 isRect=false;
                 isErase=true;
                 isEllipse=false;
@@ -216,11 +239,9 @@ func_buttons.forEach(button=>{
             bslash_button_s.innerHTML='\\';
             color_select.appendChild(bslash_button_s);
 
-            // let pattern;
             ctx.lineWidth=0;
             canvas.addEventListener('mousedown', ()=>{
                 isErase=false;
-                // isLine=false;
                 isRect=false;
                 isEllipse=false;
             });
@@ -235,9 +256,6 @@ func_buttons.forEach(button=>{
 
                     canvas.addEventListener('mousedown', (e)=>{
                         isDrawing=true;
-                        isErase=false;
-                        isRect=false;
-                        isEllipse=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
 
@@ -272,10 +290,6 @@ func_buttons.forEach(button=>{
                         ctx.lineCap='square';
 
                     }else if(button===button_list[6]){
-                        // let image=document.createElement('img');
-                        // image.src="./images/forward-slash.png";
-                        // pattern=ctx.createPattern(image, "repeat");
-                        // ctx.strokeStyle=pattern;
                         ctx.lineWidth=10;
                         ctx.lineJoin='mitter';
                         ctx.lineCap='butt';
@@ -373,6 +387,12 @@ func_buttons.forEach(button=>{
             color_select.appendChild(rect_fill);
             
             let button_list=[...document.querySelectorAll('.inner-div')];
+
+            canvas.addEventListener('mousedown', ()=>{
+                isDrawing=false;
+                isErase=false;
+                isEllipse=false;
+            });
             
             button_list.forEach(button=>{
                 button.addEventListener('click', ()=>{
@@ -385,9 +405,6 @@ func_buttons.forEach(button=>{
                     
                     canvas.addEventListener('mousedown', (e)=>{
                         isRect=true;
-                        isDrawing=false;
-                        isErase=false;
-                        isEllipse=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
                     canvas.addEventListener('mouseout', ()=>isRect=false);
@@ -452,37 +469,39 @@ func_buttons.forEach(button=>{
 
             let button_list=[...document.querySelectorAll('.inner-div')];
 
+            canvas.addEventListener('mousedown', ()=>{
+                isRect=false;
+                isDrawing=false;
+                isErase=false;
+            });
+
             button_list.forEach(button=>{
                 button.addEventListener('click', ()=>{
 
                     button_list.map(button=>button.removeAttribute('id'));
-                    button_list[0].innerHTML="<img src='./images/rectangle.png'>";
-                    button_list[0].firstElementChild.style.width='38px';
-                    button_list[0].firstElementChild.style.height='20px';
                     button['id']='btn-active';
                     
                     canvas.addEventListener('mousedown', (e)=>{
                         isEllipse=true;
-                        isRect=false;
-                        isDrawing=false;
-                        isErase=false;
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
+
                     canvas.addEventListener('mouseout', ()=>isRect=false);
                     
                     if(button===button_list[0]){
+                        canvas.addEventListener('mouseup', draw_ellipse, true);
+                        canvas.removeEventListener('mouseup', draw_border_fill_ellipse, true);
+                        canvas.removeEventListener('mouseup', draw_fill_ellipse, true);
+
+                    }else if(button===button_list[1]){
+                        canvas.removeEventListener('mouseup', draw_ellipse, true);
                         canvas.addEventListener('mouseup', draw_border_fill_ellipse, true);
+                        canvas.removeEventListener('mouseup', draw_fill_ellipse, true);
+                    }else if(button===button_list[2]){
+                        canvas.removeEventListener('mouseup', draw_ellipse, true);
+                        canvas.removeEventListener('mouseup', draw_border_fill_ellipse, true);
+                        canvas.addEventListener('mouseup', draw_fill_ellipse, true);
                     }
-                    // }else if(button===button_list[1]){
-                    //     canvas.removeEventListener('mouseup', draw_rect, true);
-                    //     canvas.removeEventListener('mouseup', draw_fill_rect, true);
-                    //     canvas.addEventListener('mouseup', draw_border_fill_rect, true);
-                        
-                    // }else if(button===button_list[2]){
-                    //     canvas.removeEventListener('mouseup', draw_rect, true);
-                    //     canvas.removeEventListener('mouseup', draw_border_fill_rect, true);
-                    //     canvas.addEventListener('mouseup', draw_fill_rect, true);
-                    // }
 
                 });
 
@@ -490,14 +509,13 @@ func_buttons.forEach(button=>{
             
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
-            // ctx.beginPath();
-            // ctx.ellipse(100, 100, 50, 50, 0, 0, 2 * Math.PI);
-            // ctx.stroke();
+            
         }else{
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
                 isErase=false;
                 isRect=false;
+                isEllipse=false;
             });
         }
 
