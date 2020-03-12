@@ -5,10 +5,6 @@ const ctx=canvas.getContext('2d');
 let lastX=0;
 let lastY=0;
 
-window.addEventListener('mousemove', function(e){
-    document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`;
-});
-
 let back_fore_color=document.getElementById('foreground');
 const back_fore=document.querySelectorAll('.pressed button');
 back_fore.forEach(b_f=>{
@@ -106,16 +102,24 @@ function draw_fill_ellipse(e){
 let pressed=null;
 let width=10;
 
-//Tells if the mouse cursor is clicked or if the user is only hovering over the canvas
 let isDrawing=false;
 let isErase=false;
 let isRect=false;
 let isEllipse=false;
+let isColorPick=false;
 
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
 func_buttons.forEach(button=>{
     button.addEventListener('click', ()=>{
+
+        document.getElementById('color-select').style.backgroundColor="#bbc6c9";
+
+        isDrawing=false;
+        isErase=false;
+        isRect=false;
+        isEllipse=false;
+        isColorPick=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -141,6 +145,7 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isErase=true;
                 isEllipse=false;
+                isColorPick=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -151,6 +156,32 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mouseout', ()=>isErase=false);
             canvas.addEventListener('mouseup', ()=>isErase=false);
+
+        }else if(button['title']==='Pick Color' && button['id']==='btn-pressed'){
+            
+            canvas.addEventListener('mousedown', ()=>{
+                isDrawing=false;
+                isErase=false;
+                isRect=false;
+                isEllipse=false;
+                isColorPick=true
+            });
+
+            canvas.addEventListener('mousemove', (e)=>{
+                if(!isColorPick){return;}
+                let data=ctx.getImageData(e.layerX, e.layerY, 1, 1).data;
+                console.log(data);
+                document.getElementById('color-select').style.backgroundColor=`rgb(${data[0]}, ${data[1]}, ${data[2]})`;
+                console.log(document.getElementById('color-select').style.backgroundColor);
+            });
+
+            canvas.addEventListener('mouseout', ()=>isColorPick=false);
+
+            canvas.addEventListener('mouseup', ()=>{
+                if(!isColorPick){return;}
+                document.getElementById('foreground').style.backgroundColor=document.getElementById('color-select').style.backgroundColor;
+                isColorPick=false;
+            });
 
         }else if(button['title']==='Pencil' && button['id']==='btn-pressed'){
 
@@ -164,6 +195,7 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isRect=false;
                 isEllipse=false;
+                isColorPick=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -244,6 +276,7 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isRect=false;
                 isEllipse=false;
+                isColorPick=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -346,6 +379,7 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isRect=false;
                 isEllipse=false;
+                isColorPick=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -392,6 +426,7 @@ func_buttons.forEach(button=>{
                 isDrawing=false;
                 isErase=false;
                 isEllipse=false;
+                isColorPick=false;
             });
             
             button_list.forEach(button=>{
@@ -436,12 +471,13 @@ func_buttons.forEach(button=>{
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
 
         }else if(button['title']==='Ellipse' && button['id']==='btn-pressed'){
+
             let ellipse_borderless=document.createElement('button');
             ellipse_borderless.classList.add('inner-div');
             ellipse_borderless.innerHTML="<img src='./images/ellipse_borderless.png'>";
             ellipse_borderless.firstElementChild.style.width='34px';
             ellipse_borderless.style.width='44px';
-            ellipse_borderless.firstElementChild.style.height='20px';
+            ellipse_borderless.firstElementChild.style.height='17px';
             ellipse_borderless.style.marginLeft='2px';
             color_select.appendChild(ellipse_borderless);
 
@@ -473,6 +509,7 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isDrawing=false;
                 isErase=false;
+                isColorPick-false;
             });
 
             button_list.forEach(button=>{
@@ -516,6 +553,7 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isRect=false;
                 isEllipse=false;
+                isColorPick=false;
             });
         }
 
