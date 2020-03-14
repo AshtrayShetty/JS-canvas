@@ -36,6 +36,31 @@ function draw(e){
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
 
+function quadraticCurve(e){
+    if(!isCurve){return;}
+    let distance=Math.sqrt(Math.pow(e.offsetX-lastX, 2)+Math.pow(e.offsetY-lastY, 2));
+    if(distance<=330){
+        let X=prompt("X-coordinate of control point (Default: mid point)", `${(e.offsetX+lastX)/2}`);
+        let Y=prompt("Y-coordinate of control point (Default: mid point)", `${(e.offsetY+lastY)/2}`);
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.quadraticCurveTo(parseInt(X), parseInt(Y), e.offsetX, e.offsetY);
+        ctx.stroke();
+        [lastX, lastY]=[e.offsetX, e.offsetY];
+    }else{
+        let X1=prompt("X-coordinate of first control point (Default: one-third distance)", `${(e.offsetX+lastX)/3}`);
+        let Y1=prompt("Y-coordinate of first control point (Default: one-third distance)", `${(e.offsetY+lastY)/3}`);
+        let X2=prompt("X-coordinate of second control point (Default: two-third distance)", `${2*(e.offsetX+lastX)/3}`);
+        let Y2=prompt("Y-coordinate of second control point (Default: two-third distance)", `${2*(e.offsetY+lastY)/3}`);
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.bezierCurveTo(parseInt(X1), parseInt(Y1), parseInt(X2), parseInt(Y2), e.offsetX, e.offsetY);
+        ctx.stroke();
+    }
+
+}
+
+
 function draw_rect(e){
     if(!isRect){return;}
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
@@ -47,15 +72,11 @@ function draw_border_fill_rect(e){
     ctx.lineWidth=2;
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
     ctx.fillStyle="white";
-    if(e.offsetX>lastX && e.offsetY<lastY){
-        ctx.fillRect(lastX+1, e.offsetY+1, Math.abs(e.offsetX-lastX-2), Math.abs(e.offsetY-lastY+2));
-    }else if(e.offsetX<lastX && e.offsetY<lastY){
-        ctx.fillRect(e.offsetX+1, e.offsetY+1, Math.abs(e.offsetX-lastX+2), Math.abs(e.offsetY-lastY+2));
-    }else if(e.offsetX<lastX && e.offsetY>lastY){
-        ctx.fillRect(e.offsetX+1, lastY+1, Math.abs(e.offsetX-lastX+2), Math.abs(e.offsetY-lastY-2));
-    }else{
-        ctx.fillRect(lastX+1, lastY+1, e.offsetX-lastX-2, e.offsetY-lastY-2);
-    }
+    let x_coord=lastX<e.offsetX?lastX+1:e.offsetX+1;
+    let y_coord=lastY<e.offsetY?lastY+1:e.offsetY+1;
+    let x_width=lastX<e.offsetX?Math.abs(e.offsetX-lastX-2):Math.abs(e.offsetX-lastX+2);
+    let y_width=lastY<e.offsetY?Math.abs(e.offsetY-lastY-2):Math.abs(e.offsetY-lastY+2);
+    ctx.fillRect(x_coord, y_coord, x_width, y_width);
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
 
@@ -107,6 +128,7 @@ let isErase=false;
 let isRect=false;
 let isEllipse=false;
 let isColorPick=false;
+let isCurve=false;
 
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
@@ -146,6 +168,7 @@ func_buttons.forEach(button=>{
                 isErase=true;
                 isEllipse=false;
                 isColorPick=false;
+                isCurve=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -164,12 +187,13 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isRect=false;
                 isEllipse=false;
-                isColorPick=true
+                isCurve=false;
+                isColorPick=true;
             });
 
             canvas.addEventListener('mousemove', (e)=>{
                 if(!isColorPick){return;}
-                let data=ctx.getImageData(e.layerX, e.layerY, 1, 1).data;
+                let data=ctx.getImageData(e.clientX, e.clientY, 1, 1).data;
                 console.log(data);
                 document.getElementById('color-select').style.backgroundColor=`rgb(${data[0]}, ${data[1]}, ${data[2]})`;
                 console.log(document.getElementById('color-select').style.backgroundColor);
@@ -182,6 +206,31 @@ func_buttons.forEach(button=>{
                 document.getElementById('foreground').style.backgroundColor=document.getElementById('color-select').style.backgroundColor;
                 isColorPick=false;
             });
+        
+        // }else if(button['title']==='Magnifier' && button['id']==='btn-pressed'){
+
+        //     let zoomed=false;
+
+        //     canvas.addEventListener('mousedown', ()=>{
+        //         isDrawing=false;
+        //         isErase=false;
+        //         isRect=false;
+        //         isEllipse=false;
+        //         isColorPick=false;
+        //     });
+
+        //     canvas.addEventListener('click', ()=>{
+        //         if(zoomed){
+        //             canvas.style.transform='scale(2)';
+        //             canvas.style.translate='10em';
+        //             zoomed=false;
+        //         }else{
+        //             canvas.style.transform='scale(1)';
+        //             canvas.style.translate='-2em';
+        //             zoomed=true;
+        //         }
+        //     });
+        //     console.log(zoomed);
 
         }else if(button['title']==='Pencil' && button['id']==='btn-pressed'){
 
@@ -196,6 +245,7 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isEllipse=false;
                 isColorPick=false;
+                isCurve=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -277,6 +327,7 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isEllipse=false;
                 isColorPick=false;
+                isCurve=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -380,12 +431,60 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isEllipse=false;
                 isColorPick=false;
+                isCurve=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
             canvas.removeEventListener('mousemove', draw, true);
             canvas.addEventListener('mouseout', ()=>isDrawing=false);
             canvas.addEventListener('mouseup', draw, true);
+
+        }else if(button['title']==='Curve' && button['id']==='btn-pressed'){
+
+            ctx.lineCap='round';
+            ctx.lineJoin='round';
+            ctx.lineWidth=1;
+            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+
+            canvas.addEventListener('mousedown', (e)=>{
+                isColorPick=false;
+                isDrawing=false;
+                isEllipse=false;
+                isErase=false;
+                isRect=false;
+                isCurve=true;
+                [lastX, lastY]=[e.offsetX, e.offsetY];
+            });
+
+            canvas.removeEventListener('mousemove', draw, true);
+            canvas.addEventListener('mouseout', ()=>isDrawing=false);
+            canvas.addEventListener('mouseup', quadraticCurve, true);
+            
+            // Define the points as {x, y}
+            let start = { x: 50,    y: 420 };
+            let cp1 =   { x: 230,   y: 500 };
+            let cp2 =   { x: 250,   y: 30 };
+            let end =   { x: 0,   y: 0 };
+
+            // Cubic Bézier curve
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
+            ctx.stroke();
+
+            // Start and end points
+            ctx.fillStyle = 'blue';
+            ctx.beginPath();
+            ctx.arc(start.x, start.y, 5, 0, 2 * Math.PI);  // Start point
+            ctx.arc(end.x, end.y, 5, 0, 2 * Math.PI);      // End point
+            ctx.fill();
+
+            // Control points
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(cp1.x, cp1.y, 5, 0, 2 * Math.PI);  // Control point one
+            ctx.arc(cp2.x, cp2.y, 5, 0, 2 * Math.PI);  // Control point two
+            ctx.fill();
 
         }else if(button['title']==='Rectangle' && button['id']==='btn-pressed'){
 
