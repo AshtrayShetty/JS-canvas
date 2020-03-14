@@ -12,8 +12,10 @@ menu_items.forEach(item=>{
         }
         sub_item_list[menu_items.indexOf(item)].style.visibility="visible";
         visible_menu.push(menu_items[menu_items.indexOf(item)]);
-        item.querySelector('li').classList.add('active');
+        item.querySelector('li').classList.add('active');   
     });
+
+
 });
 
 canvas.addEventListener('click', ()=>{
@@ -25,3 +27,9 @@ canvas.addEventListener('click', ()=>{
 window.addEventListener('mousemove', function(e){
     document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`;
 });
+
+function colorChange(){
+    document.getElementById('foreground').style.backgroundColor=document.getElementById('head')['value'];
+};
+
+function newCanvas(){window.location.reload();}
