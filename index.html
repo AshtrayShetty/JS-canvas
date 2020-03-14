@@ -15,7 +15,7 @@
                 <div>
                     <li><span>F</span>ile</li>
                     <ul class="menu">
-                        <a href="#"><li>New</li></a>
+                        <a href="#" onclick="newCanvas()"><li>New</li></a>
                         <a href="#"><li>Open</li></a>
                         <a href="#"><li>Save</li></a>
                         <a href="#"><li>Save As</li></a>
@@ -55,9 +55,16 @@
                         <a href="#"><li>Clear Image</li></a>
                         <a href="#"><li>Draw Opaque</li></a>
                     </ul>
+                </div>
+                <div>
+                    <li><span>C</span>olors</li>
+                    <ul class="menu">
+                        <input type="color" id="head" value="#e66465" onchange="colorChange()">
+                    </ul>
                 </div> 
-                <li><span>C</span>olors</li>
-                <li><span>H</span>elp</li>
+                <a href="https://github.com/AshtrayShetty/JS-canvas" target="_blank" style="color: black;">
+                    <li><span>H</span>elp</li>
+                </a>
             </ul>
         </nav>
     </div>

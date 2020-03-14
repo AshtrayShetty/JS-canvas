@@ -42,6 +42,11 @@ img{
     width: 20px;
 }
 
+input{
+    width: 125px;
+    z-index: 1;
+}
+
 canvas{
     position: absolute;
     top: 25px;
@@ -69,7 +74,7 @@ button.inner-div{
     text-align: center;
 }
 
-ul.menu{
+.menu{
     display: flex;
     visibility: hidden;
     flex-direction: column;
@@ -78,7 +83,7 @@ ul.menu{
     background-color: #bbc6c9;
     position: relative;
     border: 1px outset #818283;
-    z-index: 99;
+    /* z-index: 99; */
 }
 
 ul.menu a li{
