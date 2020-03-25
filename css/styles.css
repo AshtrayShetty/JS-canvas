@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+body{
+    overflow: hidden;
+}
+
 div{
     background-color: #bbc6c9;
     height: 25px;
@@ -219,4 +223,20 @@ ul.menu a{
 
 #btn-active i{
     color: white;
+}
+
+#text-editor{
+    position: absolute;
+    left: 35%;
+    top: 50%;
+    height: 35px;
+    width: 339px;
+    padding-left: 5px;
+    padding-top: 1px;
+    border: 1px outset #818283;
+    box-shadow: 2px 2px #e3e6e7;
+    visibility: hidden;
+}
+#canvas-container{
+    height: 0;
 }
