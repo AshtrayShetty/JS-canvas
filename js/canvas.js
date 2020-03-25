@@ -132,10 +132,12 @@ let isText=false;
 
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
+
 func_buttons.forEach(button=>{
     button.addEventListener('click', ()=>{
 
         document.getElementById('color-select').style.backgroundColor="#bbc6c9";
+        document.getElementById('text-editor').style.visibility="hidden";
 
         isDrawing=false;
         isErase=false;
@@ -455,12 +457,33 @@ func_buttons.forEach(button=>{
                 textArea.style.width=`${Math.abs(lastX-e.clientX)}px`;
                 textArea.style.height=`${Math.abs(lastY-e.clientY)}px`;
                 textArea.style.position="absolute";
-                textArea.style.left=`${lastX<e.offsetX?lastX:e.offsetX}px`;
-                textArea.style.top=`${lastY<e.offsetY?lastY:e.offsetY}px`;
-                textArea.style.borderStyle="dashed"
+                textArea.style.left=`${lastX<e.offsetX?lastX:e.clientX}px`;
+                textArea.style.top=`${lastY<e.offsetY?lastY:e.clientY}px`;
+                textArea.style.outline="none";
                 document.getElementById('canvas-container').appendChild(textArea);
+                textArea.addEventListener("focus", ()=>{
+                    textArea.style.borderStyle="dashed"
+                    document.getElementById('text-editor').style.visibility="visible";
+                    textArea.style.fontFamily=document.getElementById('fonts').value;
+                    textArea.style.fontSize=`${document.getElementsByName('size')[0].value}px`;
+                    textArea.style.color=document.getElementById('foreground').style.backgroundColor;
+                    document.getElementById('text-editor').querySelectorAll("button").forEach(styleButton=>{
+                        styleButton.addEventListener('click', ()=>{
+                            if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[0]){
+                                textArea.style.fontWeight="bolder";
+                            }else if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[1]){
+                                textArea.style.fontStyle="italic";
+                            }else if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[2]){
+                                textArea.style.textDecoration="underline";
+                            }
+                        })
+                    });
+                });
+                
                 [lastX, lastY]=[e.clientX, e.clientY];
-            })
+            });
+
+            
 
         }else if(button['title']==='Line' && button['id']==='btn-pressed'){
             
