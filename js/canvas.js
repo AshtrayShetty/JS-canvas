@@ -60,7 +60,6 @@ function quadraticCurve(e){
 
 }
 
-
 function draw_rect(e){
     if(!isRect){return;}
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
@@ -129,6 +128,7 @@ let isRect=false;
 let isEllipse=false;
 let isColorPick=false;
 let isCurve=false;
+let isText=false;
 
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
@@ -142,6 +142,7 @@ func_buttons.forEach(button=>{
         isRect=false;
         isEllipse=false;
         isColorPick=false;
+        isText=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -151,6 +152,8 @@ func_buttons.forEach(button=>{
             func_buttons.map(button=>button.removeAttribute('id'));
             button['id']='btn-pressed';
         }
+
+        let textArea=[...document.querySelectorAll('textarea')];
 
         isDrawing=false;
         while(color_select.hasChildNodes()){color_select.removeChild(color_select.firstElementChild);}
@@ -169,7 +172,9 @@ func_buttons.forEach(button=>{
                 isEllipse=false;
                 isColorPick=false;
                 isCurve=false;
+                isText=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
+                textArea.map(area=>area.style.zIndex='-1');
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -189,6 +194,8 @@ func_buttons.forEach(button=>{
                 isEllipse=false;
                 isCurve=false;
                 isColorPick=true;
+                isText=false;
+                textArea.map(area=>area.style.zIndex='-1');
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -238,6 +245,7 @@ func_buttons.forEach(button=>{
             ctx.lineJoin='round';
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+            textArea.map(area=>area.style.zIndex='-1');
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
@@ -246,6 +254,7 @@ func_buttons.forEach(button=>{
                 isEllipse=false;
                 isColorPick=false;
                 isCurve=false;
+                isText=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -328,6 +337,8 @@ func_buttons.forEach(button=>{
                 isEllipse=false;
                 isColorPick=false;
                 isCurve=false;
+                isText=false;
+                textArea.map(area=>area.style.zIndex='-1');
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -418,6 +429,35 @@ func_buttons.forEach(button=>{
                 });
             });
 
+        }else if(button['title']==="Text" && button['id']==='btn-pressed'){
+
+            textArea.map(area=>area.style.zIndex="1");
+
+            canvas.addEventListener('mousedown', (e)=>{
+                isText=true;
+                isDrawing=false;
+                isEllipse=false;
+                isRect=false;
+                isEllipse=false;
+                isErase=false;
+                isColorPick=false;
+                [lastX, lastY]=[e.clientX, e.clientY];
+            });
+
+            canvas.addEventListener('mouseout', ()=>isText=false);
+            canvas.addEventListener('mouseup', (e)=>{
+                if(!isText){return;}
+                let textArea=document.createElement('textarea');
+                textArea.style.width=`${Math.abs(lastX-e.clientX)}px`;
+                textArea.style.height=`${Math.abs(lastY-e.clientY)}px`;
+                textArea.style.position="absolute";
+                textArea.style.left=`${lastX<e.offsetX?lastX:e.offsetX}px`;
+                textArea.style.top=`${lastY<e.offsetY?lastY:e.offsetY}px`;
+                textArea.style.borderStyle="dashed"
+                document.getElementById('canvas-container').appendChild(textArea);
+                [lastX, lastY]=[e.clientX, e.clientY];
+            })
+
         }else if(button['title']==='Line' && button['id']==='btn-pressed'){
             
             ctx.lineCap='round';
@@ -432,7 +472,9 @@ func_buttons.forEach(button=>{
                 isEllipse=false;
                 isColorPick=false;
                 isCurve=false;
+                isText=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
+                textArea.map(area=>area.style.zIndex='-1');
             });
 
             canvas.removeEventListener('mousemove', draw, true);
@@ -444,8 +486,7 @@ func_buttons.forEach(button=>{
             ctx.lineCap='round';
             ctx.lineJoin='round';
             ctx.lineWidth=1;
-            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
-
+            
             canvas.addEventListener('mousedown', (e)=>{
                 isColorPick=false;
                 isDrawing=false;
@@ -453,13 +494,17 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isRect=false;
                 isCurve=true;
+                isText=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
+                textArea.map(area=>area.style.zIndex='-1');
             });
-
+            
             canvas.removeEventListener('mousemove', draw, true);
             canvas.addEventListener('mouseout', ()=>isDrawing=false);
             canvas.addEventListener('mouseup', quadraticCurve);
 
+            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+            
         }else if(button['title']==='Rectangle' && button['id']==='btn-pressed'){
 
             let rect_borderless=document.createElement('button');
@@ -500,6 +545,8 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isEllipse=false;
                 isColorPick=false;
+                isText=false;
+                textArea.map(area=>area.style.zIndex='-1');
             });
             
             button_list.forEach(button=>{
@@ -583,6 +630,8 @@ func_buttons.forEach(button=>{
                 isDrawing=false;
                 isErase=false;
                 isColorPick-false;
+                isText=false;
+                textArea.map(area=>area.style.zIndex='-1');
             });
 
             button_list.forEach(button=>{
@@ -627,6 +676,9 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isEllipse=false;
                 isColorPick=false;
+                isCurve=false;
+                isText=false;
+                textArea.map(area=>area.style.zIndex='-1');
             });
         }
 
