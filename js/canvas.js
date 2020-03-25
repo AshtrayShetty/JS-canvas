@@ -143,6 +143,7 @@ func_buttons.forEach(button=>{
         isEllipse=false;
         isColorPick=false;
         isText=false;
+        isCurve=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -154,6 +155,7 @@ func_buttons.forEach(button=>{
         }
 
         let textArea=[...document.querySelectorAll('textarea')];
+        canvas.style.cursor='default';
 
         isDrawing=false;
         while(color_select.hasChildNodes()){color_select.removeChild(color_select.firstElementChild);}
@@ -431,6 +433,7 @@ func_buttons.forEach(button=>{
 
         }else if(button['title']==="Text" && button['id']==='btn-pressed'){
 
+            canvas.style.cursor="crosshair";
             textArea.map(area=>area.style.zIndex="1");
 
             canvas.addEventListener('mousedown', (e)=>{
@@ -441,6 +444,7 @@ func_buttons.forEach(button=>{
                 isEllipse=false;
                 isErase=false;
                 isColorPick=false;
+                isCurve=false;
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
@@ -460,6 +464,7 @@ func_buttons.forEach(button=>{
 
         }else if(button['title']==='Line' && button['id']==='btn-pressed'){
             
+            canvas.style.cursor="crosshair";
             ctx.lineCap='round';
             ctx.lineJoin='round';
             ctx.lineWidth=1;
@@ -483,6 +488,7 @@ func_buttons.forEach(button=>{
 
         }else if(button['title']==='Curve' && button['id']==='btn-pressed'){
 
+            canvas.style.cursor="crosshair";
             ctx.lineCap='round';
             ctx.lineJoin='round';
             ctx.lineWidth=1;
@@ -506,6 +512,8 @@ func_buttons.forEach(button=>{
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
         }else if(button['title']==='Rectangle' && button['id']==='btn-pressed'){
+
+            canvas.style.cursor="crosshair";
 
             let rect_borderless=document.createElement('button');
             rect_borderless.classList.add('inner-div');
@@ -546,6 +554,7 @@ func_buttons.forEach(button=>{
                 isEllipse=false;
                 isColorPick=false;
                 isText=false;
+                isCurve=false;
                 textArea.map(area=>area.style.zIndex='-1');
             });
             
@@ -592,6 +601,8 @@ func_buttons.forEach(button=>{
 
         }else if(button['title']==='Ellipse' && button['id']==='btn-pressed'){
 
+            canvas.style.cursor="crosshair";
+
             let ellipse_borderless=document.createElement('button');
             ellipse_borderless.classList.add('inner-div');
             ellipse_borderless.innerHTML="<img src='./images/ellipse_borderless.png'>";
@@ -631,6 +642,7 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isColorPick-false;
                 isText=false;
+                isCurve=false;
                 textArea.map(area=>area.style.zIndex='-1');
             });
 
