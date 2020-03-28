@@ -238,10 +238,14 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mousemove', (e)=>{
                 if(!isColorPick){return;}
-                let data=ctx.getImageData(e.clientX, e.clientY, 1, 1).data;
-                console.log(data);
-                document.getElementById('color-select').style.backgroundColor=`rgb(${data[0]}, ${data[1]}, ${data[2]})`;
-                console.log(document.getElementById('color-select').style.backgroundColor);
+                let data=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+                if(data[3]===0){
+                    if(data[0]===0 && data[1]===0 && data[2]===0){
+                        document.getElementById('color-select').style.backgroundColor="white";
+                    }
+                }else{
+                    document.getElementById('color-select').style.backgroundColor=`rgb(${data[0]}, ${data[1]}, ${data[2]})`;
+                }
             });
 
             canvas.addEventListener('mouseout', ()=>isColorPick=false);
