@@ -119,6 +119,22 @@ function draw_fill_ellipse(e){
     ctx.fill();
 }
 
+function wrapText(text, x, y, maxWidth) {
+    let words = text.split(' ');
+    let line = '';
+
+    for(let n = 0; n < words.length; n++) {
+        let testLine = line + words[n] + ' ';
+        let testWidth = ctx.measureText(testLine).width;
+        if (testWidth > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += 25;
+        }else {line = testLine;}
+    }
+    ctx.fillText(line, x, y);
+  }
+
 let pressed=null;
 let width=10;
 
@@ -130,6 +146,7 @@ let isColorPick=false;
 let isCurve=false;
 let isText=false;
 
+let textArea=null;
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
 
@@ -157,6 +174,7 @@ func_buttons.forEach(button=>{
         }
 
         let textArea=[...document.querySelectorAll('textarea')];
+
         canvas.style.cursor='default';
 
         isDrawing=false;
@@ -169,6 +187,15 @@ func_buttons.forEach(button=>{
                 if(width!==3 && e.keyCode===109){--width;}
             });
 
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
+
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=false;
                 isRect=false;
@@ -178,7 +205,6 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isText=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
-                textArea.map(area=>area.style.zIndex='-1');
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -191,6 +217,15 @@ func_buttons.forEach(button=>{
 
         }else if(button['title']==='Pick Color' && button['id']==='btn-pressed'){
             
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
+
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
                 isErase=false;
@@ -199,7 +234,6 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isColorPick=true;
                 isText=false;
-                textArea.map(area=>area.style.zIndex='-1');
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -249,7 +283,15 @@ func_buttons.forEach(button=>{
             ctx.lineJoin='round';
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
-            textArea.map(area=>area.style.zIndex='-1');
+            
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
@@ -267,6 +309,15 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mouseup', ()=>isDrawing=false);
 
         }else if(button['title']==='Brush' && button['id']==='btn-pressed'){
+
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
 
             let round_button_l=document.createElement('button');
             round_button_l.classList.add('inner-div');
@@ -342,7 +393,6 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isText=false;
-                textArea.map(area=>area.style.zIndex='-1');
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -436,7 +486,6 @@ func_buttons.forEach(button=>{
         }else if(button['title']==="Text" && button['id']==='btn-pressed'){
 
             canvas.style.cursor="crosshair";
-            textArea.map(area=>area.style.zIndex="1");
 
             canvas.addEventListener('mousedown', (e)=>{
                 isText=true;
@@ -452,6 +501,7 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mouseout', ()=>isText=false);
             canvas.addEventListener('mouseup', (e)=>{
+
                 if(!isText){return;}
                 let textArea=document.createElement('textarea');
                 textArea.style.width=`${Math.abs(lastX-e.clientX)}px`;
@@ -460,26 +510,36 @@ func_buttons.forEach(button=>{
                 textArea.style.left=`${lastX<e.offsetX?lastX:e.clientX}px`;
                 textArea.style.top=`${lastY<e.offsetY?lastY:e.clientY}px`;
                 textArea.style.outline="none";
+                textArea.style.borderStyle="dashed";
                 document.getElementById('canvas-container').appendChild(textArea);
+
                 textArea.addEventListener("focus", ()=>{
-                    textArea.style.borderStyle="dashed"
                     document.getElementById('text-editor').style.visibility="visible";
                     textArea.style.fontFamily=document.getElementById('fonts').value;
                     textArea.style.fontSize=`${document.getElementsByName('size')[0].value}px`;
                     textArea.style.color=document.getElementById('foreground').style.backgroundColor;
-                    document.getElementById('text-editor').querySelectorAll("button").forEach(styleButton=>{
+
+                    let bold=true, italic=true, underline=true;
+
+                    document.getElementById('formatter').querySelectorAll("button").forEach(styleButton=>{
                         styleButton.addEventListener('click', ()=>{
-                            if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[0]){
-                                textArea.style.fontWeight="bolder";
-                            }else if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[1]){
-                                textArea.style.fontStyle="italic";
-                            }else if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[2]){
-                                textArea.style.textDecoration="underline";
+                            if(styleButton===document.getElementById('formatter').querySelectorAll("button")[0]){
+                                if(!bold){textArea.style.fontWeight="normal";}
+                                else{textArea.style.fontWeight="bolder";} 
+                                bold=(!bold);
+                            }else if(styleButton===document.getElementById('formatter').querySelectorAll("button")[1]){
+                                if(!italic){textArea.style.fontStyle="normal";}
+                                else{textArea.style.fontStyle="italic";}
+                                italic=(!italic);
+                            }else if(styleButton===document.getElementById('formatter').querySelectorAll("button")[2]){
+                                if(!underline){textArea.style.textDecoration="none";}
+                                else{textArea.style.textDecoration="underline";}
+                                underline=(!underline);
                             }
-                        })
+                        });
                     });
                 });
-                
+
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
@@ -492,6 +552,15 @@ func_buttons.forEach(button=>{
             ctx.lineJoin='round';
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+            
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
@@ -502,7 +571,6 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isText=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
-                textArea.map(area=>area.style.zIndex='-1');
             });
 
             canvas.removeEventListener('mousemove', draw, true);
@@ -516,6 +584,15 @@ func_buttons.forEach(button=>{
             ctx.lineJoin='round';
             ctx.lineWidth=1;
             
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
+            
             canvas.addEventListener('mousedown', (e)=>{
                 isColorPick=false;
                 isDrawing=false;
@@ -525,7 +602,6 @@ func_buttons.forEach(button=>{
                 isCurve=true;
                 isText=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
-                textArea.map(area=>area.style.zIndex='-1');
             });
             
             canvas.removeEventListener('mousemove', draw, true);
@@ -570,6 +646,15 @@ func_buttons.forEach(button=>{
             color_select.appendChild(rect_fill);
             
             let button_list=[...document.querySelectorAll('.inner-div')];
+            
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
 
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
@@ -578,7 +663,6 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isText=false;
                 isCurve=false;
-                textArea.map(area=>area.style.zIndex='-1');
             });
             
             button_list.forEach(button=>{
@@ -625,6 +709,15 @@ func_buttons.forEach(button=>{
         }else if(button['title']==='Ellipse' && button['id']==='btn-pressed'){
 
             canvas.style.cursor="crosshair";
+            
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
 
             let ellipse_borderless=document.createElement('button');
             ellipse_borderless.classList.add('inner-div');
@@ -666,7 +759,6 @@ func_buttons.forEach(button=>{
                 isColorPick-false;
                 isText=false;
                 isCurve=false;
-                textArea.map(area=>area.style.zIndex='-1');
             });
 
             button_list.forEach(button=>{
@@ -705,6 +797,16 @@ func_buttons.forEach(button=>{
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
         }else{
+            
+            textArea.map(area=>{
+                area.style.zIndex='-1';
+                area.style.borderStyle="none";
+                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+                area.remove();
+            });
+
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
                 isErase=false;
@@ -713,7 +815,6 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isText=false;
-                textArea.map(area=>area.style.zIndex='-1');
             });
         }
 
