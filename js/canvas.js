@@ -133,7 +133,22 @@ function wrapText(text, x, y, maxWidth) {
         }else {line = testLine;}
     }
     ctx.fillText(line, x, y);
-  }
+}
+
+function draw_text(){
+    let textArea=[...document.querySelectorAll('textarea')];
+
+    textArea.map(area=>{
+        area.style.zIndex='-1';
+        area.style.borderStyle="none";
+        ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
+        ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
+        if(area.style.fontWeight==='bolder'){ctx.font="bold "+ctx.font;}
+        if(area.style.fontStyle==='italic'){ctx.font="italic "+ctx.font;}
+        wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
+        area.remove();
+    });
+}
 
 let pressed=null;
 let width=10;
@@ -173,8 +188,6 @@ func_buttons.forEach(button=>{
             button['id']='btn-pressed';
         }
 
-        let textArea=[...document.querySelectorAll('textarea')];
-
         canvas.style.cursor='default';
 
         isDrawing=false;
@@ -187,14 +200,7 @@ func_buttons.forEach(button=>{
                 if(width!==3 && e.keyCode===109){--width;}
             });
 
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=false;
@@ -217,14 +223,7 @@ func_buttons.forEach(button=>{
 
         }else if(button['title']==='Pick Color' && button['id']==='btn-pressed'){
             
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
@@ -288,14 +287,7 @@ func_buttons.forEach(button=>{
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
@@ -314,14 +306,7 @@ func_buttons.forEach(button=>{
 
         }else if(button['title']==='Brush' && button['id']==='btn-pressed'){
 
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             let round_button_l=document.createElement('button');
             round_button_l.classList.add('inner-div');
@@ -525,17 +510,17 @@ func_buttons.forEach(button=>{
 
                     let bold=true, italic=true, underline=true;
 
-                    document.getElementById('formatter').querySelectorAll("button").forEach(styleButton=>{
+                    document.getElementById('text-editor').querySelectorAll("button").forEach(styleButton=>{
                         styleButton.addEventListener('click', ()=>{
-                            if(styleButton===document.getElementById('formatter').querySelectorAll("button")[0]){
+                            if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[0]){
                                 if(!bold){textArea.style.fontWeight="normal";}
                                 else{textArea.style.fontWeight="bolder";} 
                                 bold=(!bold);
-                            }else if(styleButton===document.getElementById('formatter').querySelectorAll("button")[1]){
+                            }else if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[1]){
                                 if(!italic){textArea.style.fontStyle="normal";}
                                 else{textArea.style.fontStyle="italic";}
                                 italic=(!italic);
-                            }else if(styleButton===document.getElementById('formatter').querySelectorAll("button")[2]){
+                            }else if(styleButton===document.getElementById('text-editor').querySelectorAll("button")[2]){
                                 if(!underline){textArea.style.textDecoration="none";}
                                 else{textArea.style.textDecoration="underline";}
                                 underline=(!underline);
@@ -557,14 +542,7 @@ func_buttons.forEach(button=>{
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             canvas.addEventListener('mousedown', (e)=>{
                 isDrawing=true;
@@ -588,14 +566,7 @@ func_buttons.forEach(button=>{
             ctx.lineJoin='round';
             ctx.lineWidth=1;
             
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
             
             canvas.addEventListener('mousedown', (e)=>{
                 isColorPick=false;
@@ -651,14 +622,7 @@ func_buttons.forEach(button=>{
             
             let button_list=[...document.querySelectorAll('.inner-div')];
             
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
@@ -714,14 +678,7 @@ func_buttons.forEach(button=>{
 
             canvas.style.cursor="crosshair";
             
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             let ellipse_borderless=document.createElement('button');
             ellipse_borderless.classList.add('inner-div');
@@ -802,14 +759,7 @@ func_buttons.forEach(button=>{
             
         }else{
             
-            textArea.map(area=>{
-                area.style.zIndex='-1';
-                area.style.borderStyle="none";
-                ctx.fillStyle=`${document.getElementById('foreground').style.backgroundColor}`;
-                ctx.font=`${area.style.fontSize} ${area.style.fontFamily}`;
-                wrapText(area.value, area.offsetLeft, area.offsetTop, parseFloat(area.style.width.substr(0, area.style.width.length-2)));
-                area.remove();
-            });
+            draw_text();
 
             canvas.addEventListener('mousedown', ()=>{
                 isDrawing=false;
