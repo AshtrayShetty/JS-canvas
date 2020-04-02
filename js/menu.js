@@ -33,3 +33,22 @@ function colorChange(){
 };
 
 function newCanvas(){window.location.reload();}
+
+let clicks=false;
+
+document.getElementById("flip").addEventListener('click', ()=>{
+    clicks=(!clicks);
+    canvas.style.transform=`rotate(${90*clicks}deg)`;
+    if(clicks){
+        canvas.style.height="1466px";
+        canvas.style.width="610px";
+        canvas.style.position="absolute";
+        canvas.style.top="-403px";
+        canvas.style.left="32.45%";
+    }else{
+        canvas.style.height="610px";
+        canvas.style.width="1466px";
+        canvas.style.top="25px";
+        canvas.style.left="70px";
+    }
+});
