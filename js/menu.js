@@ -63,3 +63,8 @@ function invertColors(){
         }
     }
 }
+
+document.getElementById('save').addEventListener('click', (e)=>{
+    document.getElementById('save').href=canvas.toDataURL();
+    document.getElementById('save').download="js_canvas.png";
+});
