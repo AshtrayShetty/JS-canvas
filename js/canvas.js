@@ -150,6 +150,66 @@ function draw_text(){
     });
 }
 
+function draw_roundedRect(e){
+    if(!isRoundedRect || Math.abs(lastX-e.offsetX)<40 || Math.abs(lastY-e.offsetY)<40){return;}
+    let startX=e.offsetX<lastX?e.offsetX:lastX;
+    let endX=e.offsetX>lastX?e.offsetX:lastX;
+    let startY=e.offsetY<lastY?e.offsetY:lastY;
+    let endY=e.offsetY>lastY?e.offsetY:lastY;
+    ctx.beginPath();
+    ctx.moveTo(startX+20, startY);
+    ctx.lineTo(endX-20, startY);
+    ctx.arc(endX-20, startY+20, 20, 3*(Math.PI)/2, 0, false);
+    ctx.lineTo(endX, endY-20);
+    ctx.arc(endX-20, endY-20, 20, 0, (Math.PI)/2, false);
+    ctx.lineTo(startX+20, endY);
+    ctx.arc(startX+20, endY-20, 20, (Math.PI)/2, Math.PI, false);
+    ctx.lineTo(startX, startY+20);
+    ctx.arc(startX+20, startY+20, 20, (Math.PI), 3*(Math.PI)/2, false);
+    ctx.stroke();
+}
+
+function draw_roundedRect_borderFill(e){
+    if(!isRoundedRect || Math.abs(lastX-e.offsetX)<40 || Math.abs(lastY-e.offsetY)<40){return;}
+    draw_roundedRect(e);
+    ctx.fillStyle="white";
+    let startX=e.offsetX<lastX?e.offsetX:lastX;
+    let endX=e.offsetX>lastX?e.offsetX:lastX;
+    let startY=e.offsetY<lastY?e.offsetY:lastY;
+    let endY=e.offsetY>lastY?e.offsetY:lastY;
+    ctx.beginPath();
+    ctx.moveTo(startX+21, startY+1);
+    ctx.lineTo(endX-21, startY+1);
+    ctx.arc(endX-21, startY+21, 20, 3*(Math.PI)/2, 0, false);
+    ctx.lineTo(endX-1, endY-21);
+    ctx.arc(endX-21, endY-21, 20, 0, (Math.PI)/2, false);
+    ctx.lineTo(startX+21, endY-1);
+    ctx.arc(startX+21, endY-21, 20, (Math.PI)/2, Math.PI, false);
+    ctx.lineTo(startX+1, startY+21);
+    ctx.arc(startX+21, startY+21, 20, (Math.PI), 3*(Math.PI)/2, false);
+    ctx.fill();
+}
+
+function draw_roundedRect_fill(e){
+    if(!isRoundedRect || Math.abs(lastX-e.offsetX)<40 || Math.abs(lastY-e.offsetY)<40){return;}
+    ctx.fillStyle=document.getElementById('foreground').style.backgroundColor;
+    let startX=e.offsetX<lastX?e.offsetX:lastX;
+    let endX=e.offsetX>lastX?e.offsetX:lastX;
+    let startY=e.offsetY<lastY?e.offsetY:lastY;
+    let endY=e.offsetY>lastY?e.offsetY:lastY;
+    ctx.beginPath();
+    ctx.moveTo(startX+20, startY);
+    ctx.lineTo(endX-20, startY);
+    ctx.arc(endX-20, startY+20, 20, 3*(Math.PI)/2, 0, false);
+    ctx.lineTo(endX, endY-20);
+    ctx.arc(endX-20, endY-20, 20, 0, (Math.PI)/2, false);
+    ctx.lineTo(startX+20, endY);
+    ctx.arc(startX+20, endY-20, 20, (Math.PI)/2, Math.PI, false);
+    ctx.lineTo(startX, startY+20);
+    ctx.arc(startX+20, startY+20, 20, (Math.PI), 3*(Math.PI)/2, false);
+    ctx.fill();
+}
+
 let pressed=null;
 let width=10;
 
@@ -160,6 +220,7 @@ let isEllipse=false;
 let isColorPick=false;
 let isCurve=false;
 let isText=false;
+let isRoundedRect=false;
 
 let textArea=null;
 
@@ -178,6 +239,7 @@ func_buttons.forEach(button=>{
         isColorPick=false;
         isText=false;
         isCurve=false;
+        isRoundedRect=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -210,6 +272,7 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isText=false;
+                isRoundedRect=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -233,6 +296,7 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isColorPick=true;
                 isText=false;
+                isRoundedRect=false;
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -297,6 +361,7 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isText=false;
+                isRoundedRect=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -382,6 +447,7 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isText=false;
+                isRoundedRect=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -485,6 +551,7 @@ func_buttons.forEach(button=>{
                 isErase=false;
                 isColorPick=false;
                 isCurve=false;
+                isRoundedRect=false;
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
@@ -532,8 +599,6 @@ func_buttons.forEach(button=>{
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
-            
-
         }else if(button['title']==='Line' && button['id']==='btn-pressed'){
             
             canvas.style.cursor="crosshair";
@@ -552,6 +617,7 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isText=false;
+                isRoundedRect=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -576,6 +642,7 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isCurve=true;
                 isText=false;
+                isRoundedRect=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
             
@@ -631,6 +698,7 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isText=false;
                 isCurve=false;
+                isRoundedRect=false;
             });
             
             button_list.forEach(button=>{
@@ -717,8 +785,9 @@ func_buttons.forEach(button=>{
                 isRect=false;
                 isDrawing=false;
                 isErase=false;
-                isColorPick-false;
+                isColorPick=false;
                 isText=false;
+                isRoundedRect=false;
                 isCurve=false;
             });
 
@@ -733,7 +802,7 @@ func_buttons.forEach(button=>{
                         [lastX, lastY]=[e.offsetX, e.offsetY];
                     });
 
-                    canvas.addEventListener('mouseout', ()=>isRect=false);
+                    canvas.addEventListener('mouseout', ()=>isEllipse=false);
                     
                     if(button===button_list[0]){
                         canvas.addEventListener('mouseup', draw_ellipse, true);
@@ -757,6 +826,89 @@ func_buttons.forEach(button=>{
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
+        }else if(button['title']==="Rounded Rectangle" && button['id']==="btn-pressed"){
+
+            draw_text();
+
+            let rounded_borderless=document.createElement('button');
+            rounded_borderless.classList.add('inner-div');
+            rounded_borderless.innerHTML="<img src='./images/ellipse_borderless.png'>";
+            rounded_borderless.firstElementChild.style.width='34px';
+            rounded_borderless.style.width='44px';
+            rounded_borderless.firstElementChild.style.height='17px';
+            rounded_borderless.style.marginLeft='2px';
+            color_select.appendChild(rounded_borderless);
+
+            let rounded_border=document.createElement('button');
+            rounded_border.classList.add('inner-div');
+            rounded_border.innerHTML="<img src='./images/ellipse_borderless.png'>";
+            rounded_border.style.position='absolute';
+            rounded_border.style.top='30px';
+            rounded_border.style.left='2px';
+            rounded_border.firstElementChild.style.width='34px';
+            rounded_border.style.width='44px';
+            rounded_border.firstElementChild.style.height='15px';
+            color_select.appendChild(rounded_border);
+
+            let rounded_fill=document.createElement('button');
+            rounded_fill.classList.add('inner-div');
+            rounded_fill.innerHTML="<img src='./images/ellipse_fill.png'>";
+            rounded_fill.style.position='absolute';
+            rounded_fill.style.top='57px';
+            rounded_fill.style.left='2px';
+            rounded_fill.firstElementChild.style.width='34px';
+            rounded_fill.style.width='44px';
+            rounded_fill.firstElementChild.style.height='15px';
+            color_select.appendChild(rounded_fill);
+
+            let button_list=[...document.querySelectorAll('.inner-div')];
+
+            canvas.addEventListener('mousedown', ()=>{
+                isRect=false;
+                isDrawing=false;
+                isErase=false;
+                isColorPick=false;
+                isText=false;
+                isCurve=false;
+                isEllipse=false;
+            });
+
+            button_list.forEach(button=>{
+                button.addEventListener('click', ()=>{
+
+                    button_list.map(button=>button.removeAttribute('id'));
+                    button['id']='btn-active';
+                    
+                    canvas.addEventListener('mousedown', (e)=>{
+                        isRoundedRect=true;
+                        [lastX, lastY]=[e.offsetX, e.offsetY];
+                    });
+
+                    canvas.addEventListener('mouseout', ()=>isRoundedRect=false);
+                    
+                    if(button===button_list[0]){
+                        canvas.addEventListener('mouseup', draw_roundedRect, true);
+                        canvas.removeEventListener('mouseup', draw_roundedRect_borderFill, true);
+                        canvas.removeEventListener('mouseup', draw_roundedRect_fill, true);
+
+                    }else if(button===button_list[1]){
+                        canvas.removeEventListener('mouseup', draw_roundedRect, true);
+                        canvas.addEventListener('mouseup', draw_roundedRect_borderFill, true);
+                        canvas.removeEventListener('mouseup', draw_roundedRect_fill, true);
+                    }else if(button===button_list[2]){
+                        canvas.removeEventListener('mouseup', draw_roundedRect, true);
+                        canvas.removeEventListener('mouseup', draw_roundedRect_borderFill, true);
+                        canvas.addEventListener('mouseup', draw_roundedRect_fill, true);
+                    }
+
+                });
+
+            });
+            
+            ctx.lineWidth=1;
+            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+
+
         }else{
             
             draw_text();
