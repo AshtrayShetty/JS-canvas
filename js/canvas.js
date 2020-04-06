@@ -598,18 +598,7 @@ func_buttons.forEach(button=>{
             
             let airbrush=document.getElementById('airbrush');
 
-            airbrush.querySelectorAll('path').forEach(path=>{
-                path.removeAttribute('fill');
-                path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor)
-            });
-
-            let svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
-            let DOMURL = self.URL || self.webkitURL || self;
-            let brushPattern = new Image();
-            let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
-            let url = DOMURL.createObjectURL(svg);
-            brushPattern.src = url;
-
+            
             let button_list=[...color_select.querySelectorAll('.inner-div')];
             draw_text();
             
@@ -626,13 +615,27 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
-            });
 
+                
+            });
+            
             button_list.forEach(button=>{
                 button.addEventListener('click', ()=>{
-
+                    
                     button_list.map(btn=>btn.style.backgroundColor="#bbc6c9");
                     button.style.backgroundColor="navy";
+                    
+                    airbrush.querySelectorAll('path').forEach(path=>{
+                        path.removeAttribute('fill');
+                        path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor)
+                    });
+        
+                    let svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
+                    let DOMURL = self.URL || self.webkitURL || self;
+                    let brushPattern = new Image();
+                    let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+                    let url = DOMURL.createObjectURL(svg);
+                    brushPattern.src = url;
 
                     if(button===button_list[0]){
 
