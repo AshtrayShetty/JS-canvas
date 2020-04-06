@@ -153,8 +153,8 @@ function draw_text(){
 function draw_roundedRect(e){
     if(!isRoundedRect || Math.abs(lastX-e.offsetX)<40 || Math.abs(lastY-e.offsetY)<40){return;}
     let startX=e.offsetX<lastX?e.offsetX:lastX;
-    let endX=e.offsetX>lastX?e.offsetX:lastX;
     let startY=e.offsetY<lastY?e.offsetY:lastY;
+    let endX=e.offsetX>lastX?e.offsetX:lastX;
     let endY=e.offsetY>lastY?e.offsetY:lastY;
     ctx.beginPath();
     ctx.moveTo(startX+20, startY);
@@ -174,8 +174,8 @@ function draw_roundedRect_borderFill(e){
     draw_roundedRect(e);
     ctx.fillStyle="white";
     let startX=e.offsetX<lastX?e.offsetX:lastX;
-    let endX=e.offsetX>lastX?e.offsetX:lastX;
     let startY=e.offsetY<lastY?e.offsetY:lastY;
+    let endX=e.offsetX>lastX?e.offsetX:lastX;
     let endY=e.offsetY>lastY?e.offsetY:lastY;
     ctx.beginPath();
     ctx.moveTo(startX+21, startY+1);
@@ -194,8 +194,8 @@ function draw_roundedRect_fill(e){
     if(!isRoundedRect || Math.abs(lastX-e.offsetX)<40 || Math.abs(lastY-e.offsetY)<40){return;}
     ctx.fillStyle=document.getElementById('foreground').style.backgroundColor;
     let startX=e.offsetX<lastX?e.offsetX:lastX;
-    let endX=e.offsetX>lastX?e.offsetX:lastX;
     let startY=e.offsetY<lastY?e.offsetY:lastY;
+    let endX=e.offsetX>lastX?e.offsetX:lastX;
     let endY=e.offsetY>lastY?e.offsetY:lastY;
     ctx.beginPath();
     ctx.moveTo(startX+20, startY);
@@ -221,6 +221,9 @@ let isColorPick=false;
 let isCurve=false;
 let isText=false;
 let isRoundedRect=false;
+let isSAirbrush=false;
+let isMAirbrush=false;
+let isLAirbrush=false;
 
 let textArea=null;
 
@@ -240,6 +243,9 @@ func_buttons.forEach(button=>{
         isText=false;
         isCurve=false;
         isRoundedRect=false;
+        isSAirbrush=false;
+        isMAirbrush=false;
+        isLAirbrush=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -273,6 +279,9 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isText=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -297,6 +306,9 @@ func_buttons.forEach(button=>{
                 isColorPick=true;
                 isText=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -362,6 +374,9 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isText=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -448,6 +463,9 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isText=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -538,6 +556,139 @@ func_buttons.forEach(button=>{
                 });
             });
 
+        }else if(button['title']==="Airbrush" && button['id']==='btn-pressed'){
+
+            let small_brush=document.createElement('canvas');
+            small_brush.classList.add('inner-div');
+            small_brush.style.width='48px';
+            small_brush.style.height='14px';
+            small_brush.style.backgroundColor='#bbc6c9';
+            small_brush.style.position='absolute';
+            small_brush.style.top='2px';
+            small_brush.style.left='0';
+            let sBrush=small_brush.getContext('2d');
+            let image=new Image();
+            image.src='../images/airbrush.png';
+            sBrush.drawImage(image, 0, 0, 25, 25, 60, 0, 150, 150);
+            color_select.appendChild(small_brush);
+
+            let medium_brush=document.createElement('canvas');
+            medium_brush.classList.add('inner-div');
+            medium_brush.style.width='48px';
+            medium_brush.style.height='14px';
+            medium_brush.style.backgroundColor='#bbc6c9';
+            medium_brush.style.position='absolute';
+            medium_brush.style.top='25px';
+            medium_brush.style.left='0';
+            let mBrush=medium_brush.getContext('2d');
+            mBrush.drawImage(image, 23, 0, 25, 25, 60, 0, 175, 175);
+            color_select.appendChild(medium_brush);
+
+            let large_brush=document.createElement('canvas');
+            large_brush.classList.add('inner-div');
+            large_brush.style.width='48px';
+            large_brush.style.height='14px';
+            large_brush.style.backgroundColor='#bbc6c9';
+            large_brush.style.position='absolute';
+            large_brush.style.top='50px';
+            large_brush.style.left='0';
+            let lBrush=large_brush.getContext('2d');
+            lBrush.drawImage(image, 50, 0, 25, 30, 60, 0, 200, 200);
+            color_select.appendChild(large_brush);
+            
+            let airbrush=document.getElementById('airbrush');
+
+            airbrush.querySelectorAll('path').forEach(path=>{
+                path.removeAttribute('fill');
+                path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor)
+            });
+
+            let svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
+            let DOMURL = self.URL || self.webkitURL || self;
+            let brushPattern = new Image();
+            let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+            let url = DOMURL.createObjectURL(svg);
+            brushPattern.src = url;
+
+            let button_list=[...color_select.querySelectorAll('.inner-div')];
+            draw_text();
+            
+            canvas.addEventListener('mousedown', (e)=>{
+                isText=false;
+                isDrawing=false;
+                isEllipse=false;
+                isRect=false;
+                isEllipse=false;
+                isErase=false;
+                isColorPick=false;
+                isCurve=false;
+                isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
+            });
+
+            button_list.forEach(button=>{
+                button.addEventListener('click', ()=>{
+
+                    button_list.map(btn=>btn.style.backgroundColor="#bbc6c9");
+                    button.style.backgroundColor="navy";
+
+                    if(button===button_list[0]){
+
+                        canvas.addEventListener('mousedown', ()=>{
+                            isSAirbrush=true;
+                            isMAirbrush=false;
+                            isLAirbrush=false;
+                        });
+
+                        canvas.addEventListener('mousemove', (e)=>{
+                            if(!isSAirbrush){return;}
+                            ctx.drawImage(brushPattern, 60, 0, 15, 35, e.offsetX, e.offsetY, 10, 40);
+                        });
+
+                    }else if(button===button_list[1]){
+
+                        canvas.addEventListener('mousedown', ()=>{
+                            isSAirbrush=false;
+                            isMAirbrush=true;
+                            isLAirbrush=false;
+                        });
+
+                        canvas.addEventListener('mousemove', (e)=>{
+                            if(!isMAirbrush){return;}
+                            ctx.drawImage(brushPattern, 0, 56, 55, 55, e.offsetX, e.offsetY, 50, 70);
+                        });
+
+                    }else if(button===button_list[2]){
+
+                        canvas.addEventListener('mousedown', ()=>{
+                            isSAirbrush=false;
+                            isMAirbrush=false;
+                            isLAirbrush=true;
+                        });
+
+                        canvas.addEventListener('mousemove', (e)=>{
+                            if(!isLAirbrush){return;}
+                            ctx.drawImage(brushPattern, 50, 36, 55, 55, e.offsetX, e.offsetY, 90, 90);
+                        });
+
+                    }
+
+                    canvas.addEventListener('mouseout', ()=>{
+                        isSAirbrush=false;
+                        isMAirbrush=false;
+                        isLAirbrush=false;
+                    });
+
+                    canvas.addEventListener('mouseup', ()=>{
+                        isSAirbrush=false;
+                        isMAirbrush=false;
+                        isLAirbrush=false;
+                    });
+                });
+            });
+
         }else if(button['title']==="Text" && button['id']==='btn-pressed'){
 
             canvas.style.cursor="crosshair";
@@ -552,6 +703,9 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
@@ -618,6 +772,9 @@ func_buttons.forEach(button=>{
                 isCurve=false;
                 isText=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -643,6 +800,9 @@ func_buttons.forEach(button=>{
                 isCurve=true;
                 isText=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
             
@@ -699,6 +859,9 @@ func_buttons.forEach(button=>{
                 isText=false;
                 isCurve=false;
                 isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
             });
             
             button_list.forEach(button=>{
@@ -789,6 +952,9 @@ func_buttons.forEach(button=>{
                 isText=false;
                 isRoundedRect=false;
                 isCurve=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
             });
 
             button_list.forEach(button=>{
@@ -871,6 +1037,9 @@ func_buttons.forEach(button=>{
                 isText=false;
                 isCurve=false;
                 isEllipse=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
             });
 
             button_list.forEach(button=>{
@@ -921,6 +1090,9 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
                 isCurve=false;
                 isText=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
             });
         }
 
