@@ -237,6 +237,11 @@ ul.menu a{
     box-shadow: 2px 2px #e3e6e7;
     visibility: hidden;
 }
+
 #canvas-container{
     height: 0;
+}
+
+#airbrush{
+    visibility: hidden;
 }
