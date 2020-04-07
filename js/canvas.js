@@ -623,14 +623,12 @@ func_buttons.forEach(button=>{
                     button.style.backgroundColor="navy";
                     
                     let svgString = new XMLSerializer().serializeToString(document.querySelector('object').getSVGDocument().querySelector('svg'));
-                    document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.setAttributeNS(fill, document.getElementById('foreground').style.backgroundColor));
-                    console.log(document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.getAttributeNS(fill)));
+                    document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor));
                     let DOMURL = self.URL || self.webkitURL || self;
                     let brushPattern = new Image();
                     let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
                     let url = DOMURL.createObjectURL(svg);
                     brushPattern.src = url;
-                    console.log(url);
 
                     if(button===button_list[0]){
 
