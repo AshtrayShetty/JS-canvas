@@ -596,9 +596,6 @@ func_buttons.forEach(button=>{
             lBrush.drawImage(image, 50, 0, 25, 30, 60, 0, 200, 200);
             color_select.appendChild(large_brush);
             
-            let airbrush=document.getElementById('airbrush');
-
-            
             let button_list=[...color_select.querySelectorAll('.inner-div')];
             draw_text();
             
@@ -625,17 +622,15 @@ func_buttons.forEach(button=>{
                     button_list.map(btn=>btn.style.backgroundColor="#bbc6c9");
                     button.style.backgroundColor="navy";
                     
-                    airbrush.querySelectorAll('path').forEach(path=>{
-                        path.removeAttribute('fill');
-                        path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor)
-                    });
-        
-                    let svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
+                    let svgString = new XMLSerializer().serializeToString(document.querySelector('object').getSVGDocument().querySelector('svg'));
+                    document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.setAttributeNS(fill, document.getElementById('foreground').style.backgroundColor));
+                    console.log(document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.getAttributeNS(fill)));
                     let DOMURL = self.URL || self.webkitURL || self;
                     let brushPattern = new Image();
                     let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
                     let url = DOMURL.createObjectURL(svg);
                     brushPattern.src = url;
+                    console.log(url);
 
                     if(button===button_list[0]){
 
