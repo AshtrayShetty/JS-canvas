@@ -224,6 +224,7 @@ let isRoundedRect=false;
 let isSAirbrush=false;
 let isMAirbrush=false;
 let isLAirbrush=false;
+let isZoomed=false;
 
 let textArea=null;
 
@@ -246,6 +247,7 @@ func_buttons.forEach(button=>{
         isSAirbrush=false;
         isMAirbrush=false;
         isLAirbrush=false;
+        isZoomed=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -282,6 +284,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -309,6 +312,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -331,30 +335,38 @@ func_buttons.forEach(button=>{
                 isColorPick=false;
             });
         
-        // }else if(button['title']==='Magnifier' && button['id']==='btn-pressed'){
+        }else if(button['title']==='Magnifier' && button['id']==='btn-pressed'){
 
-        //     let zoomed=false;
+            draw_text();
+            let zoomed=canvas.style.transform==="scale(1.4)"?true:false;
 
-        //     canvas.addEventListener('mousedown', ()=>{
-        //         isDrawing=false;
-        //         isErase=false;
-        //         isRect=false;
-        //         isEllipse=false;
-        //         isColorPick=false;
-        //     });
+            canvas.addEventListener('mousedown', ()=>{
+                isDrawing=false;
+                isErase=false;
+                isRect=false;
+                isEllipse=false;
+                isColorPick=false;
+                isCurve=false;
+                isLAirbrush=false;
+                isMAirbrush=false;
+                isRoundedRect=false;
+                isSAirbrush=false;
+                isText=false;
+                isZoomed=true;
+            });
 
-        //     canvas.addEventListener('click', ()=>{
-        //         if(zoomed){
-        //             canvas.style.transform='scale(2)';
-        //             canvas.style.translate='10em';
-        //             zoomed=false;
-        //         }else{
-        //             canvas.style.transform='scale(1)';
-        //             canvas.style.translate='-2em';
-        //             zoomed=true;
-        //         }
-        //     });
-        //     console.log(zoomed);
+            canvas.addEventListener('click', ()=>{
+                if(!zoomed && isZoomed){
+                    canvas.style.transform='scale(1.4)';
+                    canvas.style.left='364px';
+                    canvas.style.top='147px';
+                }else if(zoomed && isZoomed){
+                    canvas.style.transform='scale(1)';
+                    canvas.style.left='70px';
+                    canvas.style.top='25px';
+                }
+                zoomed=!zoomed;
+            });
 
         }else if(button['title']==='Pencil' && button['id']==='btn-pressed'){
 
@@ -377,6 +389,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -466,6 +479,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -612,8 +626,8 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
-
-                
+                isZoomed=false;
+                document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor));
             });
             
             button_list.forEach(button=>{
@@ -623,68 +637,68 @@ func_buttons.forEach(button=>{
                     button.style.backgroundColor="navy";
                     
                     let svgString = new XMLSerializer().serializeToString(document.querySelector('object').getSVGDocument().querySelector('svg'));
-                    document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor));
                     let DOMURL = self.URL || self.webkitURL || self;
                     let brushPattern = new Image();
                     let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
                     let url = DOMURL.createObjectURL(svg);
                     brushPattern.src = url;
-
+                    
                     if(button===button_list[0]){
-
+                        
                         canvas.addEventListener('mousedown', ()=>{
                             isSAirbrush=true;
                             isMAirbrush=false;
                             isLAirbrush=false;
                         });
-
+                        
                         canvas.addEventListener('mousemove', (e)=>{
                             if(!isSAirbrush){return;}
                             ctx.drawImage(brushPattern, 60, 0, 15, 35, e.offsetX, e.offsetY, 10, 40);
                         });
-
+                        
                     }else if(button===button_list[1]){
-
+                        
                         canvas.addEventListener('mousedown', ()=>{
                             isSAirbrush=false;
                             isMAirbrush=true;
                             isLAirbrush=false;
                         });
-
+                        
                         canvas.addEventListener('mousemove', (e)=>{
                             if(!isMAirbrush){return;}
                             ctx.drawImage(brushPattern, 0, 56, 55, 55, e.offsetX, e.offsetY, 50, 70);
                         });
-
+                        
                     }else if(button===button_list[2]){
-
+                        
                         canvas.addEventListener('mousedown', ()=>{
                             isSAirbrush=false;
                             isMAirbrush=false;
                             isLAirbrush=true;
                         });
-
+                        
                         canvas.addEventListener('mousemove', (e)=>{
                             if(!isLAirbrush){return;}
                             ctx.drawImage(brushPattern, 50, 36, 55, 55, e.offsetX, e.offsetY, 90, 90);
                         });
-
+                        
                     }
-
+                    
                     canvas.addEventListener('mouseout', ()=>{
                         isSAirbrush=false;
                         isMAirbrush=false;
                         isLAirbrush=false;
                     });
-
+                    
                     canvas.addEventListener('mouseup', ()=>{
                         isSAirbrush=false;
                         isMAirbrush=false;
                         isLAirbrush=false;
                     });
                 });
-            });
 
+            });
+            
         }else if(button['title']==="Text" && button['id']==='btn-pressed'){
 
             canvas.style.cursor="crosshair";
@@ -702,6 +716,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
@@ -771,6 +786,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -799,6 +815,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
             
@@ -858,6 +875,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
             });
             
             button_list.forEach(button=>{
@@ -951,6 +969,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
             });
 
             button_list.forEach(button=>{
@@ -1036,6 +1055,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
             });
 
             button_list.forEach(button=>{
@@ -1089,6 +1109,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isMAirbrush=false;
                 isLAirbrush=false;
+                isZoomed=false;
             });
         }
 
