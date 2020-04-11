@@ -204,6 +204,7 @@ ul.menu a{
 
 #description{
     width: 80%;
+    font-size: 13px;
 }
 
 #cursor-pos, #draw-size{
