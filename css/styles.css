@@ -112,6 +112,11 @@ ul.menu a{
     background-color: #e3e6e7;
 }
 
+#head:hover{
+    background-color: navy;
+    cursor: pointer;
+}
+
 .pressed{
     height: 40px;
     width: 40px;
