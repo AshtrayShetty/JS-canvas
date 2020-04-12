@@ -225,6 +225,7 @@ let isSAirbrush=false;
 let isMAirbrush=false;
 let isLAirbrush=false;
 let isZoomed=false;
+let isFill=false;
 
 let textArea=null;
 
@@ -248,6 +249,7 @@ func_buttons.forEach(button=>{
         isMAirbrush=false;
         isLAirbrush=false;
         isZoomed=false;
+        isFill=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -285,6 +287,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -295,6 +298,118 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mouseout', ()=>isErase=false);
             canvas.addEventListener('mouseup', ()=>isErase=false);
+
+        }else if(button['title']==='Fill With Color' && button['id']==='btn-pressed'){
+            
+            canvas.addEventListener('mousedown', ()=>{
+                isDrawing=false;
+                isRect=false;
+                isErase=false;
+                isEllipse=false;
+                isColorPick=false;
+                isCurve=false;
+                isText=false;
+                isRoundedRect=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
+                isZoomed=false;
+                isFill=true;
+            });
+
+            canvas.addEventListener('mouseup', (e)=>{
+                if(!isFill){return;}
+                ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+                let data=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+                let fillData=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+                let [startX, startY]=[e.offsetX+1, e.offsetY];
+                
+                while(startX<=1467 && fillData[0]===data[0] && fillData[1]===data[1] && fillData[2]===data[2]){
+                    let yBound=ctx.getImageData(startX+1, startY+1, 1, 1).data;
+                    while(startY<=610 && fillData[0]===yBound[0] && fillData[1]===yBound[1] && fillData[2]===yBound[2]){
+                        ++startY;
+                        yBound=ctx.getImageData(startX, startY+1, 1, 1).data;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX+1, e.offsetY);
+                    ctx.lineTo(startX+1, startY);
+                    ctx.stroke();
+
+                    startY=e.offsetY;
+                    yBound=ctx.getImageData(startX+1, startY-1, 1, 1).data;
+                    while(startY>=0 && fillData[0]===yBound[0] && fillData[1]===yBound[1] && fillData[2]===yBound[2]){
+                        --startY;
+                        yBound=ctx.getImageData(startX+1, startY-1, 1, 1).data;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX+1, e.offsetY);
+                    ctx.lineTo(startX+1, startY);
+                    ctx.stroke();
+
+                    ++startX;
+                    startY=e.offsetY;
+                    fillData=ctx.getImageData(startX+1, e.offsetY, 1, 1).data;
+                }
+
+                [startX, startY]=[e.offsetX, e.offsetY];
+                data=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+                fillData=ctx.getImageData(startX, startY, 1, 1).data;
+                while(startX>0 && fillData[0]===data[0] && fillData[1]===data[1] && fillData[2]===data[2]){
+                    let yBound=ctx.getImageData(startX+1, startY+1, 1, 1).data;
+                    while(startY<=610 && fillData[0]===yBound[0] && fillData[1]===yBound[1] && fillData[2]===yBound[2]){
+                        ++startY;
+                        yBound=ctx.getImageData(startX+1, startY+1, 1, 1).data;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX+1, e.offsetY);
+                    ctx.lineTo(startX+1, startY);
+                    ctx.stroke();
+
+                    startY=e.offsetY;
+                    yBound=ctx.getImageData(startX-1, startY-1, 1, 1).data;
+                    while(startY>=0 && fillData[0]===yBound[0] && fillData[1]===yBound[1] && fillData[2]===yBound[2]){
+                        --startY;
+                        yBound=ctx.getImageData(startX-1, startY-1, 1, 1).data;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX+1, e.offsetY);
+                    ctx.lineTo(startX+1, startY);
+                    ctx.stroke();
+
+                    --startX;
+                    startY=e.offsetY;
+                    fillData=ctx.getImageData(startX-1, e.offsetY, 1, 1).data;
+                }
+
+                let yBound=ctx.getImageData(startX, startY, 1, 1).data;
+                while(startY<=610 && fillData[0]===yBound[0] && fillData[1]===yBound[1] && fillData[2]===yBound[2]){
+                    ++startY;
+                    yBound=ctx.getImageData(startX, startY, 1, 1).data;
+                }
+                ctx.beginPath();
+                ctx.moveTo(e.offsetX+1, e.offsetY+1);
+                ctx.lineTo(e.offsetX+1, startY);
+                ctx.stroke();
+
+                startY=e.offsetY;
+                yBound=ctx.getImageData(startX, startY-1, 1, 1).data;
+                fillData=ctx.getImageData(e.offsetX, e.offsetY-1, 1, 1).data;
+                console.log([yBound, fillData]);
+                while(startY>=0 && fillData[0]===yBound[0] && fillData[1]===yBound[1] && fillData[2]===yBound[2]){
+                    console.log(startY);
+                    --startY;
+                    yBound=ctx.getImageData(startX, startY, 1, 1).data;
+                }
+                ctx.beginPath();
+                ctx.moveTo(e.offsetX+1, e.offsetY-1);
+                ctx.lineTo(e.offsetX+1, startY);
+                ctx.stroke();
+            });
+
 
         }else if(button['title']==='Pick Color' && button['id']==='btn-pressed'){
             
@@ -313,6 +428,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -353,6 +469,7 @@ func_buttons.forEach(button=>{
                 isSAirbrush=false;
                 isText=false;
                 isZoomed=true;
+                isFill=false;
             });
 
             canvas.addEventListener('click', ()=>{
@@ -390,6 +507,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -480,6 +598,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -627,6 +746,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
                 document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor));
             });
             
@@ -717,6 +837,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
@@ -787,6 +908,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -816,6 +938,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
             
@@ -876,6 +999,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
             });
             
             button_list.forEach(button=>{
@@ -970,6 +1094,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
             });
 
             button_list.forEach(button=>{
@@ -1056,6 +1181,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
             });
 
             button_list.forEach(button=>{
@@ -1110,6 +1236,7 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isFill=false;
             });
         }
 
