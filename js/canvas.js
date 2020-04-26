@@ -4,6 +4,8 @@ const ctx=canvas.getContext('2d');
 // To keep track of where the start and stop positions of the stroke are
 let lastX=0;
 let lastY=0;
+let startX=0;
+let startY=0;
 
 let back_fore_color=document.getElementById('foreground');
 const back_fore=document.querySelectorAll('.pressed button');
@@ -226,6 +228,9 @@ let isMAirbrush=false;
 let isLAirbrush=false;
 let isZoomed=false;
 let isFill=false;
+let isPolygonTransparent=false;
+let isPolygonOpaque=false;
+let isPolygonFill=false;
 
 let textArea=null;
 
@@ -250,6 +255,9 @@ func_buttons.forEach(button=>{
         isLAirbrush=false;
         isZoomed=false;
         isFill=false;
+        isPolygonTransparent=false;
+        isPolygonOpaque=false;
+        isPolygonFill=false;
 
         if(button.firstChild===pressed){
             pressed=null;
@@ -288,6 +296,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -314,6 +325,9 @@ func_buttons.forEach(button=>{
                 isMAirbrush=false;
                 isLAirbrush=false;
                 isZoomed=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
                 isFill=true;
             });
 
@@ -429,6 +443,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
             });
 
             canvas.addEventListener('mousemove', (e)=>{
@@ -470,6 +487,9 @@ func_buttons.forEach(button=>{
                 isText=false;
                 isZoomed=true;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
             });
 
             canvas.addEventListener('click', ()=>{
@@ -508,6 +528,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -599,6 +622,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
             });
 
             let button_list=[...document.querySelectorAll('.inner-div')];
@@ -747,6 +773,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
                 document.querySelector('object').getSVGDocument().querySelectorAll('path').forEach(path=>path.setAttribute('fill', document.getElementById('foreground').style.backgroundColor));
             });
             
@@ -838,6 +867,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
                 [lastX, lastY]=[e.clientX, e.clientY];
             });
 
@@ -909,6 +941,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
 
@@ -939,6 +974,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
                 [lastX, lastY]=[e.offsetX, e.offsetY];
             });
             
@@ -1000,6 +1038,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
             });
             
             button_list.forEach(button=>{
@@ -1042,6 +1083,209 @@ func_buttons.forEach(button=>{
             
             ctx.lineWidth=1;
             ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+
+        }else if(button['title']==='Polygon' && button['id']==='btn-pressed'){
+
+            canvas.style.cursor="crosshair";
+            
+            draw_text();
+
+            let polygon_borderless=document.createElement('button');
+            polygon_borderless.classList.add('inner-div');
+            polygon_borderless.innerHTML="<img src='./images/ellipse_borderless.png'>";
+            polygon_borderless.firstElementChild.style.width='34px';
+            polygon_borderless.style.width='44px';
+            polygon_borderless.firstElementChild.style.height='17px';
+            polygon_borderless.style.marginLeft='2px';
+            color_select.appendChild(polygon_borderless);
+
+            let polygon_border=document.createElement('button');
+            polygon_border.classList.add('inner-div');
+            polygon_border.innerHTML="<img src='./images/ellipse_borderless.png'>";
+            polygon_border.style.position='absolute';
+            polygon_border.style.top='30px';
+            polygon_border.style.left='2px';
+            polygon_border.firstElementChild.style.width='34px';
+            polygon_border.style.width='44px';
+            polygon_border.firstElementChild.style.height='15px';
+            color_select.appendChild(polygon_border);
+
+            let polygon_fill=document.createElement('button');
+            polygon_fill.classList.add('inner-div');
+            polygon_fill.innerHTML="<img src='./images/ellipse_fill.png'>";
+            polygon_fill.style.position='absolute';
+            polygon_fill.style.top='57px';
+            polygon_fill.style.left='2px';
+            polygon_fill.firstElementChild.style.width='34px';
+            polygon_fill.style.width='44px';
+            polygon_fill.firstElementChild.style.height='15px';
+            color_select.appendChild(polygon_fill);
+            
+            let button_list=[...document.querySelectorAll('.inner-div')];
+            let clicks=false;
+
+            canvas.addEventListener('mousedown', (e)=>{
+                isRect=false;
+                isDrawing=false;
+                isErase=false;
+                isColorPick=false;
+                isText=false;
+                isRoundedRect=false;
+                isCurve=false;
+                isSAirbrush=false;
+                isMAirbrush=false;
+                isLAirbrush=false;
+                isZoomed=false;
+                isFill=false;
+                ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
+            });
+            
+            button_list.forEach(button=>{
+                button.addEventListener('click', ()=>{
+
+                    button_list.map(button=>button.removeAttribute('id'));
+                    button['id']='btn-active';
+                    
+                    if(button===button_list[0]){
+
+                        clicks=false;
+
+                        if(isPolygonOpaque){
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(startX, startY);
+                            ctx.stroke();
+                            ctx.fill();
+                        }else if(isPolygonFill){
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(startX, startY);
+                            ctx.fill();
+                        }
+
+                        ctx.lineWidth=1;
+                        canvas.addEventListener('mousedown', (e)=>{
+                            isPolygonTransparent=true;
+                            isPolygonOpaque=false;
+                            isPolygonFill=false;
+                            [lastX, lastY]=[e.offsetX, e.offsetY];
+                            if(!clicks && isPolygonTransparent){
+                                [startX, startY]=[lastX, lastY];
+                                ctx.beginPath();
+                            }else if(clicks && isPolygonTransparent){
+                                ctx.lineTo(e.offsetX, e.offsetY);
+                                ctx.stroke();
+                            }
+                        });
+                        
+                        canvas.addEventListener('mouseout', ()=>{
+                            if(!clicks){isPolygonTransparent=false;}
+                        });
+                        
+                        canvas.addEventListener('mouseup', (e)=>{
+                            if(!isPolygonTransparent){return;}
+                            ctx.beginPath();
+                            if(!clicks){
+                                ctx.moveTo(lastX, lastY);
+                                clicks=true;
+                            }
+                            ctx.lineTo(e.offsetX, e.offsetY);
+                            ctx.stroke();
+                        });
+
+                    }else if(button===button_list[1]){
+                        
+                        clicks=false;
+
+                        if(isPolygonTransparent){
+                            ctx.beginPath();
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(startX, startY);
+                            ctx.stroke();
+                        }else if(isPolygonFill){
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(startX, startY);
+                            ctx.fill();
+                        }
+                        
+                        ctx.lineWidth=2;
+                        canvas.addEventListener('mousedown', (e)=>{
+                            isPolygonTransparent=false;
+                            isPolygonOpaque=true;
+                            isPolygonFill=false;
+                            ctx.fillStyle='white';
+                            [lastX, lastY]=[e.offsetX, e.offsetY];
+                            if(!clicks && isPolygonOpaque){
+                                [startX, startY]=[lastX, lastY];
+                                ctx.beginPath();
+                            }else if(clicks && isPolygonOpaque){
+                                ctx.lineTo(e.offsetX, e.offsetY);
+                                ctx.stroke();
+                            }
+                        });
+                        
+                        canvas.addEventListener('mouseout', ()=>{
+                            if(!clicks){isPolygonOpaque=false;}
+                        });
+                        
+                        canvas.addEventListener('mouseup', (e)=>{
+                            if(!isPolygonOpaque){return;}
+                            if(!clicks){
+                                ctx.moveTo(lastX, lastY);
+                                clicks=true;
+                            }
+                            ctx.lineTo(e.offsetX, e.offsetY);
+                            [lastX, lastY]=[e.offsetX, e.offsetY];
+                        });
+
+                    }else if(button===button_list[2]){
+
+                        clicks=false;
+
+                        if(isPolygonTransparent){
+                            ctx.beginPath();
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(startX, startY);
+                            ctx.stroke();
+                        }else if(isPolygonOpaque){
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(startX, startY);
+                            ctx.stroke();
+                            ctx.fill();
+                        }
+                        
+                        ctx.lineWidth=1;
+                        canvas.addEventListener('mousedown', (e)=>{
+                            isPolygonTransparent=false;
+                            isPolygonOpaque=false;
+                            isPolygonFill=true;
+                            ctx.fillStyle=document.getElementById('foreground').style.backgroundColor;
+                            [lastX, lastY]=[e.offsetX, e.offsetY];
+                            if(!clicks && isPolygonFill){
+                                [startX, startY]=[lastX, lastY];
+                                ctx.beginPath();
+                            }else if(clicks && isPolygonFill){
+                                ctx.lineTo(e.offsetX, e.offsetY);
+                                ctx.stroke();
+                            }
+                        });
+                        
+                        canvas.addEventListener('mouseout', ()=>{
+                            if(!clicks){isPolygonFill=false;}
+                        });
+                        
+                        canvas.addEventListener('mouseup', (e)=>{
+                            if(!isPolygonFill){return;}
+                            if(!clicks){
+                                ctx.moveTo(lastX, lastY);
+                                clicks=true;
+                            }
+                            ctx.lineTo(e.offsetX, e.offsetY);
+                            [lastX, lastY]=[e.offsetX, e.offsetY];
+                        });
+                    }
+
+                });
+
+            });
 
         }else if(button['title']==='Ellipse' && button['id']==='btn-pressed'){
 
@@ -1095,6 +1339,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
             });
 
             button_list.forEach(button=>{
@@ -1182,6 +1429,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
             });
 
             button_list.forEach(button=>{
@@ -1237,6 +1487,9 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
+                isPolygonTransparent=false;
+                isPolygonOpaque=false;
+                isPolygonFill=false;
             });
         }
 
