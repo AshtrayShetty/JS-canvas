@@ -716,6 +716,9 @@ func_buttons.forEach(button=>{
             });
 
         }else if(button['title']==="Airbrush" && button['id']==='btn-pressed'){
+            
+            let image=new Image();
+            image.src='../images/airbrush.png';
 
             let small_brush=document.createElement('canvas');
             small_brush.classList.add('inner-div');
@@ -726,8 +729,6 @@ func_buttons.forEach(button=>{
             small_brush.style.top='2px';
             small_brush.style.left='0';
             let sBrush=small_brush.getContext('2d');
-            let image=new Image();
-            image.src='../images/airbrush.png';
             sBrush.drawImage(image, 0, 0, 25, 25, 60, 0, 150, 150);
             color_select.appendChild(small_brush);
 

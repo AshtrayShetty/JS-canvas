@@ -14,8 +14,6 @@ menu_items.forEach(item=>{
         visible_menu.push(menu_items[menu_items.indexOf(item)]);
         item.querySelector('li').classList.add('active');   
     });
-
-
 });
 
 canvas.addEventListener('click', ()=>{
@@ -24,9 +22,7 @@ canvas.addEventListener('click', ()=>{
     sub_item_list.map(sub_item=>sub_item.style.visibility="hidden");
 });
 
-window.addEventListener('mousemove', function(e){
-    document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`;
-});
+window.addEventListener('mousemove', (e)=>document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`);
 
 function colorChange(){
     document.getElementById('foreground').style.backgroundColor=document.getElementById('head')['value'];
@@ -68,3 +64,20 @@ document.getElementById('save').addEventListener('click', (e)=>{
     document.getElementById('save').href=canvas.toDataURL();
     document.getElementById('save').download="js_canvas.png";
 });
+
+document.getElementById('zoom').addEventListener('click', ()=>{
+    let zoomed=canvas.style.transform==="scale(1.4)"?true:false;
+
+    if(!zoomed){
+        canvas.style.transform='scale(1.4)';
+        canvas.style.left='364px';
+        canvas.style.top='147px';
+    }else if(zoomed){
+        canvas.style.transform='scale(1)';
+        canvas.style.left='70px';
+        canvas.style.top='25px';
+    }
+    zoomed=!zoomed;
+});
+
+function clearCanvas(){ctx.clearRect(0, 0, 1466, 610);}

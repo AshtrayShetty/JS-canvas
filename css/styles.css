@@ -3,8 +3,8 @@
     padding: 0;
     box-sizing: border-box;
 }
-/* 
-body{
+
+/* body{
     overflow: hidden;
 } */
 
@@ -55,6 +55,7 @@ canvas{
     position: absolute;
     top: 25px;
     left: 70px;
+    overflow: scroll;
     /* background-color: black; */
 }
 
