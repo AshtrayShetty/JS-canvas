@@ -3,7 +3,7 @@
 A little something I made to test my Javscript skills. Took me a lot of time though!! (Hope it was worth it :smiley:). 
  
 **IMPORTANT** :  
- *Please do note that the cursor isn't visible for some features*.
+ *Please do note that the proper cursor image isn't visible for some features*.
 
 ## Motivation
 
