@@ -70,7 +70,7 @@ Allows the user to draw a rectangle. Three types:
     When drawn over another figure, that figure can be seen. Only a rectangle with the border with foreground color on the color pallete is drawn.
 
 * #### Opaque bordered :
-    Similar to Transparent bordered. But when drawn over a figure, the figure is not visible. Instead, a white background of the rectangle is visible.
+    Similar to Transparent bordered. But when drawn over a figure, the figure is not visible. Instead, a fill color corresponding to the active background color selected in the color palleter is visible.
 
 * #### Fill Rectangle :
     Fills the rectangle drawn with the foreground color on the color pallete. No border for the rectangle.

@@ -72,7 +72,7 @@ function draw_border_fill_rect(e){
     if(!isRect){return;}
     ctx.lineWidth=2;
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
-    ctx.fillStyle="white";
+    ctx.fillStyle=document.getElementById('background').style.backgroundColor;
     let x_coord=lastX<e.offsetX?lastX+1:e.offsetX+1;
     let y_coord=lastY<e.offsetY?lastY+1:e.offsetY+1;
     let x_width=lastX<e.offsetX?Math.abs(e.offsetX-lastX-2):Math.abs(e.offsetX-lastX+2);
@@ -101,7 +101,7 @@ function draw_ellipse(e){
 function draw_border_fill_ellipse(e){
     if(!isEllipse){return;}
     draw_ellipse(e);
-    ctx.fillStyle="white";
+    ctx.fillStyle=document.getElementById('background').style.backgroundColor;
     let x_center=e.offsetX<lastX?e.offsetX+(Math.abs(e.offsetX-lastX)/2):lastX+(Math.abs(e.offsetX-lastX)/2);
     let y_center=e.offsetY<lastY?e.offsetY+(Math.abs(e.offsetY-lastY)/2):lastY+(Math.abs(e.offsetY-lastY)/2);
     ctx.beginPath();
@@ -174,7 +174,7 @@ function draw_roundedRect(e){
 function draw_roundedRect_borderFill(e){
     if(!isRoundedRect || Math.abs(lastX-e.offsetX)<40 || Math.abs(lastY-e.offsetY)<40){return;}
     draw_roundedRect(e);
-    ctx.fillStyle="white";
+    ctx.fillStyle=document.getElementById('background').style.backgroundColor;
     let startX=e.offsetX<lastX?e.offsetX:lastX;
     let startY=e.offsetY<lastY?e.offsetY:lastY;
     let endX=e.offsetX>lastX?e.offsetX:lastX;
@@ -1212,7 +1212,7 @@ func_buttons.forEach(button=>{
                             isPolygonTransparent=false;
                             isPolygonOpaque=true;
                             isPolygonFill=false;
-                            ctx.fillStyle='white';
+                            ctx.fillStyle=document.getElementById('background').style.backgroundColor;
                             [lastX, lastY]=[e.offsetX, e.offsetY];
                             if(!clicks && isPolygonOpaque){
                                 [startX, startY]=[lastX, lastY];
@@ -1496,3 +1496,10 @@ func_buttons.forEach(button=>{
 
     });
 });
+
+document.addEventListener('contextmenu', (e)=>{
+    e.preventDefault();
+    let temp=document.getElementById('foreground').style.backgroundColor;
+    document.getElementById('foreground').style.backgroundColor=document.getElementById('background').style.backgroundColor;
+    document.getElementById('background').style.backgroundColor=temp;
+})
