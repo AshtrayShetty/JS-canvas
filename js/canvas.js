@@ -363,10 +363,11 @@ func_buttons.forEach(button=>{
                 let fillRed=parseFloat(foreground[0].substring(4, foreground[0].length));
                 let fillGreen=parseFloat(foreground[1]);
                 let fillBlue=parseFloat(foreground[2].substring(0, foreground[2].length-1));
-
+                
                 let currColor=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
                 
                 let colorRGB=[fillRed, fillGreen, fillBlue, 255];
+                if(currColor[0]===fillRed && currColor[1]===fillGreen && currColor[2]===fillBlue){return;}
                 let pixelStack = [[e.offsetX, e.offsetY]];
                 while(pixelStack.length){
                     let newPos=pixelStack.pop();
@@ -429,7 +430,7 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mousemove', (e)=>{
                 if(!isColorPick){return;}
                 let data=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
-                console.log(data);
+                // console.log(data);
                 if(data[3]===0){
                     if(data[0]===0 && data[1]===0 && data[2]===0){
                         document.getElementById('color-select').style.backgroundColor="rgb(255, 255, 255)";
