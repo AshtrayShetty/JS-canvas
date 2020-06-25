@@ -37,7 +37,7 @@ This feature lets the user select a rectangular area and allows you to use other
 Lets the user erase the drawing on the canvas. You can also increase/decrease the eraser size by pressing and holding the '+' and '-' buttons (respectively) on your numpad.
 
 ### 4 Fill Color : 
-Allows user to fill the selected foreground color on the color pallete inside a given boundary (closed figure). It has a (kinda) unique effect on filling. Check it out :wink: . If you don't like it, feel free to raise an issue.
+Utilizes the flood-fill algorithm (iterative) to implement the fill bucket feature. Details about the algorithm can be found [here](http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/).
 
 ### 5 Color Picker :
 Lets the user select any color present on the canvas as their foreground color.
