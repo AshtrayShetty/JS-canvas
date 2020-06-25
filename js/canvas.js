@@ -31,6 +31,7 @@ let color_select=document.getElementById('color-select');
 
 function draw(e){
     if(!isDrawing){return;}
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(e.offsetX, e.offsetY);
@@ -41,6 +42,7 @@ function draw(e){
 function quadraticCurve(e){
     if(!isCurve){return;}
     let distance=Math.sqrt(Math.pow(e.offsetX-lastX, 2)+Math.pow(e.offsetY-lastY, 2));
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     if(distance<=330){
         let X=prompt("X-coordinate of control point (Default: mid point)", `${(e.offsetX+lastX)/2}`);
         let Y=prompt("Y-coordinate of control point (Default: mid point)", `${(e.offsetY+lastY)/2}`);
@@ -64,6 +66,7 @@ function quadraticCurve(e){
 
 function draw_rect(e){
     if(!isRect){return;}
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
     [lastX, lastY]=[e.offsetX, e.offsetY];
 }
@@ -72,6 +75,7 @@ function draw_border_fill_rect(e){
     if(!isRect){return;}
     ctx.lineWidth=2;
     ctx.strokeRect(lastX, lastY, e.offsetX-lastX, e.offsetY-lastY);
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.fillStyle=document.getElementById('background').style.backgroundColor;
     let x_coord=lastX<e.offsetX?lastX+1:e.offsetX+1;
     let y_coord=lastY<e.offsetY?lastY+1:e.offsetY+1;
@@ -93,6 +97,7 @@ function draw_ellipse(e){
     let x_center=e.offsetX<lastX?e.offsetX+(Math.abs(e.offsetX-lastX)/2):lastX+(Math.abs(e.offsetX-lastX)/2);
     let y_center=e.offsetY<lastY?e.offsetY+(Math.abs(e.offsetY-lastY)/2):lastY+(Math.abs(e.offsetY-lastY)/2);
     ctx.lineWidth=2;
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.beginPath();
     ctx.ellipse(x_center, y_center, Math.abs(e.offsetX-lastX), Math.abs(e.offsetY-lastY), 0, 0, 2*Math.PI);
     ctx.stroke();
@@ -101,6 +106,7 @@ function draw_ellipse(e){
 function draw_border_fill_ellipse(e){
     if(!isEllipse){return;}
     draw_ellipse(e);
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.fillStyle=document.getElementById('background').style.backgroundColor;
     let x_center=e.offsetX<lastX?e.offsetX+(Math.abs(e.offsetX-lastX)/2):lastX+(Math.abs(e.offsetX-lastX)/2);
     let y_center=e.offsetY<lastY?e.offsetY+(Math.abs(e.offsetY-lastY)/2):lastY+(Math.abs(e.offsetY-lastY)/2);
@@ -158,6 +164,7 @@ function draw_roundedRect(e){
     let startY=e.offsetY<lastY?e.offsetY:lastY;
     let endX=e.offsetX>lastX?e.offsetX:lastX;
     let endY=e.offsetY>lastY?e.offsetY:lastY;
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.beginPath();
     ctx.moveTo(startX+20, startY);
     ctx.lineTo(endX-20, startY);
@@ -174,6 +181,7 @@ function draw_roundedRect(e){
 function draw_roundedRect_borderFill(e){
     if(!isRoundedRect || Math.abs(lastX-e.offsetX)<40 || Math.abs(lastY-e.offsetY)<40){return;}
     draw_roundedRect(e);
+    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
     ctx.fillStyle=document.getElementById('background').style.backgroundColor;
     let startX=e.offsetX<lastX?e.offsetX:lastX;
     let startY=e.offsetY<lastY?e.offsetY:lastY;
@@ -213,19 +221,18 @@ function draw_roundedRect_fill(e){
     console.log(document.getElementById('foreground').style.backgroundColor);
 }
 
-function flood_fill(x, y, color){
-    let data=ctx.getImageData(x, y, 1, 1).data;
-    let dataRGB=`rgb(${data[0]}, ${data[1]}, ${data[2]})`;
+function match_start_color(pixelPos, startColor){
+    let r=colorLayerData.data[pixelPos];
+    let g=colorLayerData.data[pixelPos+1];
+    let b=colorLayerData.data[pixelPos+2];
+    return (r==startColor[0] && g==startColor[1] && b==startColor[2]);
+}
 
-    if(x<0 || x>=1460 || y<0 || y>=610){return;}
-    if(dataRGB!==color){return;}
-
-    ctx.fillRect(x, y, 1, 1);
-
-    flood_fill(x+1, y, color);
-    flood_fill(x-1, y, color);
-    flood_fill(x, y+1, color);
-    flood_fill(x, y-1, color);
+function color_pixel(pixelPos, colorRGB){
+    colorLayerData.data[pixelPos]=colorRGB[0];
+    colorLayerData.data[pixelPos+1]=colorRGB[1];
+    colorLayerData.data[pixelPos+2]=colorRGB[2];
+    colorLayerData.data[pixelPos+3]=colorRGB[3];
 }
 
 let pressed=null;
@@ -249,6 +256,7 @@ let isPolygonOpaque=false;
 let isPolygonFill=false;
 
 let textArea=null;
+let colorLayerData=ctx.getImageData(0, 0, 1460, 610);
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
 
@@ -349,12 +357,50 @@ func_buttons.forEach(button=>{
 
             canvas.addEventListener('mouseup', (e)=>{
                 if(!isFill){return;}
+                colorLayerData=ctx.getImageData(0, 0, 1460, 610);
                 ctx.fillStyle=document.getElementById('foreground').style.backgroundColor;
+                let foreground=document.getElementById('foreground').style.backgroundColor.split(', ');
+                let fillRed=parseFloat(foreground[0].substring(4, foreground[0].length));
+                let fillGreen=parseFloat(foreground[1]);
+                let fillBlue=parseFloat(foreground[2].substring(0, foreground[2].length-1));
 
                 let currColor=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
-                let colorRGB=`rgb(${currColor[0]}, ${currColor[1]}, ${currColor[2]})`;
+                
+                let colorRGB=[fillRed, fillGreen, fillBlue, 255];
+                let pixelStack = [[e.offsetX, e.offsetY]];
+                while(pixelStack.length){
+                    let newPos=pixelStack.pop();
+                    let x=newPos[0];
+                    let y=newPos[1];
+                    let pixelPos=(y*1460+x)*4;
 
-                flood_fill(e.offsetX, e.offsetY, colorRGB);
+                    while(y-->=0 && match_start_color(pixelPos, currColor)){pixelPos-=1460*4;}
+                    pixelPos+=1460*4;
+                    ++y;
+                    let reachLeft=false;
+                    let reachRight=false;
+                    while(y++<609 && match_start_color(pixelPos, currColor)){
+                        color_pixel(pixelPos, colorRGB);
+                        if(x>0){
+                            if(match_start_color(pixelPos-4, currColor)){
+                                if(!reachLeft){
+                                    pixelStack.push([x-1, y]);
+                                    reachLeft=true;
+                                }
+                            }else if(reachLeft){reachLeft=false;}
+                        }
+                        if(x<1459){
+                            if(match_start_color(pixelPos+4, currColor)){
+                                if(!reachRight){
+                                    pixelStack.push([x+1, y]);
+                                    reachRight=true;
+                                }
+                            }else if(reachRight){reachRight=false;}
+                        }
+                        pixelPos+=1460*4;
+                    }
+                }
+                ctx.putImageData(colorLayerData, 0 ,0);
             });
 
         }else if(button['title']==='Pick Color' && button['id']==='btn-pressed'){
@@ -386,7 +432,7 @@ func_buttons.forEach(button=>{
                 console.log(data);
                 if(data[3]===0){
                     if(data[0]===0 && data[1]===0 && data[2]===0){
-                        document.getElementById('color-select').style.backgroundColor="white";
+                        document.getElementById('color-select').style.backgroundColor="rgb(255, 255, 255)";
                     }
                 }else{
                     document.getElementById('color-select').style.backgroundColor=`rgb(${data[0]}, ${data[1]}, ${data[2]})`;
@@ -443,7 +489,6 @@ func_buttons.forEach(button=>{
             ctx.lineCap='round';
             ctx.lineJoin='round';
             ctx.lineWidth=1;
-            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
             draw_text();
 
@@ -566,7 +611,6 @@ func_buttons.forEach(button=>{
                 button.addEventListener('click', ()=>{
                     button_list.map(button=>button.removeAttribute('id'));
                     button['id']='btn-active';
-                    ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
 
                     canvas.addEventListener('mousedown', (e)=>{
                         isDrawing=true;
@@ -857,7 +901,6 @@ func_buttons.forEach(button=>{
             ctx.lineCap='round';
             ctx.lineJoin='round';
             ctx.lineWidth=1;
-            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
             draw_text();
 
@@ -918,8 +961,6 @@ func_buttons.forEach(button=>{
             canvas.addEventListener('mouseout', ()=>isDrawing=false);
             canvas.addEventListener('mouseup', quadraticCurve);
 
-            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
-            
         }else if(button['title']==='Rectangle' && button['id']==='btn-pressed'){
 
             canvas.style.cursor="crosshair";
@@ -1016,7 +1057,6 @@ func_buttons.forEach(button=>{
             });
             
             ctx.lineWidth=1;
-            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
 
         }else if(button['title']==='Polygon' && button['id']==='btn-pressed'){
 
@@ -1071,7 +1111,6 @@ func_buttons.forEach(button=>{
                 isLAirbrush=false;
                 isZoomed=false;
                 isFill=false;
-                ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             });
             
             button_list.forEach(button=>{
@@ -1116,6 +1155,7 @@ func_buttons.forEach(button=>{
                         
                         canvas.addEventListener('mouseup', (e)=>{
                             if(!isPolygonTransparent){return;}
+                            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
                             ctx.beginPath();
                             if(!clicks){
                                 ctx.moveTo(lastX, lastY);
@@ -1145,6 +1185,7 @@ func_buttons.forEach(button=>{
                             isPolygonTransparent=false;
                             isPolygonOpaque=true;
                             isPolygonFill=false;
+                            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
                             ctx.fillStyle=document.getElementById('background').style.backgroundColor;
                             [lastX, lastY]=[e.offsetX, e.offsetY];
                             if(!clicks && isPolygonOpaque){
@@ -1311,7 +1352,6 @@ func_buttons.forEach(button=>{
             });
             
             ctx.lineWidth=1;
-            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
             
         }else if(button['title']==="Rounded Rectangle" && button['id']==="btn-pressed"){
 
@@ -1401,8 +1441,6 @@ func_buttons.forEach(button=>{
             });
             
             ctx.lineWidth=1;
-            ctx.strokeStyle=document.getElementById('foreground').style.backgroundColor;
-
 
         }else{
             
@@ -1430,7 +1468,7 @@ func_buttons.forEach(button=>{
     });
 });
 
-document.addEventListener('contextmenu', (e)=>{
+document.querySelector('#bottom .pressed').addEventListener('contextmenu', (e)=>{
     e.preventDefault();
     let temp=document.getElementById('foreground').style.backgroundColor;
     document.getElementById('foreground').style.backgroundColor=document.getElementById('background').style.backgroundColor;
