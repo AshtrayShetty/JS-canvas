@@ -218,14 +218,14 @@ function draw_roundedRect_fill(e){
     ctx.lineTo(startX, startY+20);
     ctx.arc(startX+20, startY+20, 20, (Math.PI), 3*(Math.PI)/2, false);
     ctx.fill();
-    console.log(document.getElementById('foreground').style.backgroundColor);
 }
 
 function match_start_color(pixelPos, startColor){
     let r=colorLayerData.data[pixelPos];
     let g=colorLayerData.data[pixelPos+1];
     let b=colorLayerData.data[pixelPos+2];
-    return (r==startColor[0] && g==startColor[1] && b==startColor[2]);
+    let a=colorLayerData.data[pixelPos+3];
+    return (r==startColor[0] && g==startColor[1] && b==startColor[2] && a==startColor[3]);
 }
 
 function color_pixel(pixelPos, colorRGB){
@@ -365,9 +365,8 @@ func_buttons.forEach(button=>{
                 let fillBlue=parseFloat(foreground[2].substring(0, foreground[2].length-1));
                 
                 let currColor=ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
-                
                 let colorRGB=[fillRed, fillGreen, fillBlue, 255];
-                if(currColor[0]===fillRed && currColor[1]===fillGreen && currColor[2]===fillBlue){return;}
+                if(currColor[0]===fillRed && currColor[1]===fillGreen && currColor[2]===fillBlue && currColor[3]===255){return;}
                 let pixelStack = [[e.offsetX, e.offsetY]];
                 while(pixelStack.length){
                     let newPos=pixelStack.pop();
