@@ -4,9 +4,9 @@
     box-sizing: border-box;
 }
 
-/* body{
+body{
     overflow: hidden;
-} */
+}
 
 div{
     background-color: #bbc6c9;
@@ -133,11 +133,16 @@ ul.menu a{
 }
 
 #sidebar{
-    height: 81vh;
+    height: 84vh;
     width: 70px;
     border-right: 1px outset #bbc6c9;
     padding-top: 20px;
     border-top: 1px outset #eaedee;
+    transition: transform 0.2s ease-in;
+}
+
+.toggleToolBox{
+    transform: translateX(-100%);
 }
 
 #buttons{
@@ -167,6 +172,13 @@ ul.menu a{
     height: 75px;
     border-top: 1px outset #eaedee;
     display: flex;
+    transition: transform 0.2s ease-in;
+}
+
+.toggleColorBox{
+    position: absolute;
+    bottom: 0;
+    transform: translateY(-100%);
 }
 
 #foreground{
@@ -197,6 +209,14 @@ ul.menu a{
 
 #status-bar{
     display: flex;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    transition: transform 0.2s ease-in;
+}
+
+.toggleStatusBar{
+    transform: translateY(100%);
 }
 
 #status-bar div{
@@ -247,6 +267,15 @@ ul.menu a{
 
 #canvas-container{
     height: 0;
+    overflow-y: scroll;
+}
+
+#canvas{
+    transition: transform 0.2s ease-in;
+}
+
+.canvas-left{
+    transform: translateX(-70px);
 }
 
 #airbrush{

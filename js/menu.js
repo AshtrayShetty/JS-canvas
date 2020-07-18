@@ -81,3 +81,17 @@ document.getElementById('zoom').addEventListener('click', ()=>{
 });
 
 function clearCanvas(){ctx.clearRect(0, 0, 1466, 610);}
+
+function toggleToolBox(){
+    document.getElementById('sidebar').classList.toggle('toggleToolBox');
+    document.getElementById('canvas').classList.toggle('canvas-left');
+}
+
+function toggleColorBox(){
+    document.getElementById('bottom').classList.toggle('toggleColorBox');
+    document.getElementById('sidebar').style.height='93.4vh';
+}
+
+function toggleStatusBar(){
+    document.getElementById('status-bar').classList.toggle('toggleStatusBar');
+}
