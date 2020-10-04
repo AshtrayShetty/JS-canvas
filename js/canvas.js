@@ -260,11 +260,24 @@ let colorLayerData=ctx.getImageData(0, 0, 1460, 610);
 
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
 
+let cursorEraser = document.getElementById('cursor-eraser');
+cursorEraser.style.width = width + "px";
+cursorEraser.style.height = width + "px";
+
+
+
+document.addEventListener('mousemove', (event) => {
+    cursorEraser.style.top = event.clientY + 'px';
+    cursorEraser.style.left = event.clientX + 'px';
+});
+
+
 func_buttons.forEach(button=>{
     button.addEventListener('click', ()=>{
 
         document.getElementById('color-select').style.backgroundColor="#bbc6c9";
         document.getElementById('text-editor').style.visibility="hidden";
+        cursorEraser.style.display = "none";
 
         isDrawing=false;
         isErase=false;
@@ -299,9 +312,13 @@ func_buttons.forEach(button=>{
 
         if(button['title']==='Eraser/Color Eraser' && button['id']==='btn-pressed'){
 
+            cursorEraser.style.display = "block";
+
             document.addEventListener('keydown', (e)=>{
                 if(e.keyCode===107){++width;}
                 if(width!==3 && e.keyCode===109){--width;}
+                cursorEraser.style.width = width + "px";
+                cursorEraser.style.height = width + "px";
             });
 
             draw_text();
