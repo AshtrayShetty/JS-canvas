@@ -281,3 +281,13 @@ ul.menu a{
 #airbrush{
     visibility: hidden;
 }
+
+#cursor-eraser{
+    position: absolute;
+    border-color: black;
+    background: rgba(0,0,0,0);
+    border-width: 2px;
+    border-style: solid;
+    display:none;
+    pointer-events: none; /*Permit to click below this div*/
+}
