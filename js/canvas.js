@@ -258,22 +258,42 @@ let isPolygonFill=false;
 let textArea=null;
 let colorLayerData=ctx.getImageData(0, 0, 1460, 610);
 
+//We store the actual menu
+let menuSelected = "";
+
 ctx.strokeStyle=back_fore_color.style.backgroundColor;
 
 let cursorEraser = document.getElementById('cursor-eraser');
 cursorEraser.style.width = width + "px";
 cursorEraser.style.height = width + "px";
 
-
+//Here we take the boudings of the canvas to have its positions
+let canvasRect = canvas.getBoundingClientRect();
 
 document.addEventListener('mousemove', (event) => {
-    cursorEraser.style.top = event.clientY + 'px';
-    cursorEraser.style.left = event.clientX + 'px';
+    //We display and move the eraser cursor only in eraser mode
+    if(menuSelected === "eraser"){
+        let mouseY = event.clientY;
+        let mouseX = event.clientX;
+        cursorEraser.style.top = mouseY + 'px';
+        cursorEraser.style.left = mouseX + 'px';
+        
+        //We take the top, right, left and bottom positions of the canvas then compare it to the cursor position to hide it
+        if(mouseY < canvasRect.top || mouseY > canvasRect.bottom || mouseX < canvasRect.left || mouseX > canvasRect.right){
+            cursorEraser.style.display = "none";
+        }
+        else{
+            //The cursor is within the canvas
+            cursorEraser.style.display = "block";
+        }
+    }
 });
 
 
 func_buttons.forEach(button=>{
     button.addEventListener('click', ()=>{
+
+        menuSelected = "";
 
         document.getElementById('color-select').style.backgroundColor="#bbc6c9";
         document.getElementById('text-editor').style.visibility="hidden";
@@ -311,6 +331,7 @@ func_buttons.forEach(button=>{
         while(color_select.hasChildNodes()){color_select.removeChild(color_select.firstElementChild);}
 
         if(button['title']==='Eraser/Color Eraser' && button['id']==='btn-pressed'){
+            menuSelected = "eraser";
 
             cursorEraser.style.display = "block";
 
