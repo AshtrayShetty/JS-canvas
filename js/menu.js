@@ -1,6 +1,8 @@
 const menu_items=[...document.querySelectorAll('#main-menu > div')];
 const sub_item_list=[...document.querySelectorAll('ul.menu')];
 let visible_menu=[];
+//unsure how else to achieve this without global scope, I cannot bind to the event listener as I will not be able to remove the event listener
+let imageData = new Image();
 
 menu_items.forEach(item=>{
     item.querySelector('li').addEventListener('click', ()=>{
@@ -94,4 +96,74 @@ function toggleColorBox(){
 
 function toggleStatusBar(){
     document.getElementById('status-bar').classList.toggle('toggleStatusBar');
+}
+
+
+//when clicking the open option in the menu
+function openFile() {
+    //create a file input
+    const input = document.createElement("input");
+    input.type = "file";
+    input.click();
+    //detect image selected
+    input.addEventListener("change", (event) => {
+      readSelectedImage(event.target.files[0]);
+      input.remove();
+    });
+
+  }
+  
+function readSelectedImage(uploadedImage) {
+    //create a new file reader
+    const fReader = new FileReader();
+    //listen for the load event of the file
+    fReader.onload = (e) => {
+        //1st try commented out
+        //let imageData = new Image();
+        imageData.onload = () => {
+        
+        //1st iteration, promp user for coordinates
+        // const x = window.prompt('X pos');
+        // const y = window.prompt('Y pos');
+        //loadImageOntoCanvas(imageData,x,y);
+
+        //after selecting an image show an empty div highlighting where the image will be placed
+            const imgPlacementDiv = document.querySelector('#image-placement'); 
+            imgPlacementDiv.style.width = imageData.width + 'px';
+            imgPlacementDiv.style.height = imageData.height + 'px';
+            imgPlacementDiv.style.display = "block";
+            //update the image 'preview' div position on mopusemove
+            canvas.addEventListener('mousemove', updateImagePlacementDiv);
+            //place the image on the canvas
+            canvas.addEventListener('click',imagePlaceClick);
+        };
+        //set the image src to trigger the load
+        imageData.src = e.target.result;
+    };
+    //pass the data to the filereader
+    fReader.readAsDataURL(uploadedImage);
+}
+
+//after selecting an image show an empty div highlighting where the image will be placed
+function updateImagePlacementDiv(e){
+    const imgPlacementDiv = document.querySelector('#image-placement'); 
+    const x = e.clientX;
+    const y = e.clientY;
+    imgPlacementDiv.style.top = y + 'px';
+    imgPlacementDiv.style.left = x + 'px';
+}
+
+//get the x and Y position of the click, hide the preview div again and remove the event listeners
+function imagePlaceClick(e){
+    const x = e.clientX - 70;
+    const y = e.clientY - 25;
+    loadImageOntoCanvas(imageData,x,y);
+    canvas.removeEventListener('click', imagePlaceClick);
+    canvas.removeEventListener('mousemove', updateImagePlacementDiv);
+    document.querySelector('#image-placement').style.display = "none";
+}
+
+//put the image on the canvas
+function loadImageOntoCanvas(image, x, y) {
+    ctx.drawImage(image, x, y, image.width, image.height);
 }
