@@ -19,10 +19,16 @@ menu_items.forEach(item=>{
 });
 
 canvas.addEventListener('click', ()=>{
+    //moved to own functions to use on image load
+    closeMenus();
+});
+
+//moved to function to use on image load
+function closeMenus(){
     let to_inactive=visible_menu.shift();
     to_inactive.querySelector('li').classList.remove('active');
     sub_item_list.map(sub_item=>sub_item.style.visibility="hidden");
-});
+}
 
 window.addEventListener('mousemove', (e)=>document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`);
 
@@ -104,6 +110,7 @@ function openFile() {
     //create a file input
     const input = document.createElement("input");
     input.type = "file";
+    input.accept = "image/*";
     input.click();
     //detect image selected
     input.addEventListener("change", (event) => {
@@ -121,16 +128,17 @@ function readSelectedImage(uploadedImage) {
         //1st try commented out
         //let imageData = new Image();
         imageData.onload = () => {
-        
+            closeMenus();
         //1st iteration, promp user for coordinates
         // const x = window.prompt('X pos');
         // const y = window.prompt('Y pos');
         //loadImageOntoCanvas(imageData,x,y);
 
+            const drawRatios = calculateImageRatios(imageData.width,imageData.height);
         //after selecting an image show an empty div highlighting where the image will be placed
             const imgPlacementDiv = document.querySelector('#image-placement'); 
-            imgPlacementDiv.style.width = imageData.width + 'px';
-            imgPlacementDiv.style.height = imageData.height + 'px';
+            imgPlacementDiv.style.width = drawRatios.width + 'px';
+            imgPlacementDiv.style.height = drawRatios.height + 'px';
             imgPlacementDiv.style.display = "block";
             //update the image 'preview' div position on mopusemove
             canvas.addEventListener('mousemove', updateImagePlacementDiv);
@@ -165,5 +173,31 @@ function imagePlaceClick(e){
 
 //put the image on the canvas
 function loadImageOntoCanvas(image, x, y) {
-    ctx.drawImage(image, x, y, image.width, image.height);
+    const drawRatios = calculateImageRatios(image.width,image.height);
+
+    ctx.drawImage(image, x, y, drawRatios.width, drawRatios.height);
+}
+
+//cresize the image and 'preview' if required.
+function calculateImageRatios(width,height){
+    //set the default value for small images
+    let drawWidth = width;
+    let drawHeight = height;
+    //check if the image is too wide, if so resize the to the canvas width
+    if(width > canvas.width){
+        ratio = canvas.width / width;
+        drawWidth = canvas.width;
+        drawHeight = height * ratio;
+    }
+    //check if the imagge is too tall, if so resize to the canvas height
+    if(height > canvas.height){
+        ratio = canvas.height / height;
+        drawHeight = canvas.height;
+        drawWidth = width * ratio;
+    }
+    //return the new values
+    return {
+        width:drawWidth,
+        height:drawHeight
+    };
 }
