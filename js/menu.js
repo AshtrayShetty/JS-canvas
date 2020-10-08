@@ -1,6 +1,8 @@
 const menu_items=[...document.querySelectorAll('#main-menu > div')];
 const sub_item_list=[...document.querySelectorAll('ul.menu')];
 let visible_menu=[];
+//unsure how else to achieve this without global scope, I cannot bind to the event listener as I will not be able to remove the event listener
+let imageData = new Image();
 
 menu_items.forEach(item=>{
     item.querySelector('li').addEventListener('click', ()=>{
@@ -17,10 +19,16 @@ menu_items.forEach(item=>{
 });
 
 canvas.addEventListener('click', ()=>{
+    //moved to own functions to use on image load
+    closeMenus();
+});
+
+//moved to function to use on image load
+function closeMenus(){
     let to_inactive=visible_menu.shift();
     to_inactive.querySelector('li').classList.remove('active');
     sub_item_list.map(sub_item=>sub_item.style.visibility="hidden");
-});
+}
 
 window.addEventListener('mousemove', (e)=>document.getElementById('cursor-pos').textContent=`${e.clientX}x${e.clientY}`);
 
@@ -94,4 +102,102 @@ function toggleColorBox(){
 
 function toggleStatusBar(){
     document.getElementById('status-bar').classList.toggle('toggleStatusBar');
+}
+
+
+//when clicking the open option in the menu
+function openFile() {
+    //create a file input
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.click();
+    //detect image selected
+    input.addEventListener("change", (event) => {
+      readSelectedImage(event.target.files[0]);
+      input.remove();
+    });
+
+  }
+  
+function readSelectedImage(uploadedImage) {
+    //create a new file reader
+    const fReader = new FileReader();
+    //listen for the load event of the file
+    fReader.onload = (e) => {
+        //1st try commented out
+        //let imageData = new Image();
+        imageData.onload = () => {
+            closeMenus();
+        //1st iteration, promp user for coordinates
+        // const x = window.prompt('X pos');
+        // const y = window.prompt('Y pos');
+        //loadImageOntoCanvas(imageData,x,y);
+
+            const drawRatios = calculateImageRatios(imageData.width,imageData.height);
+        //after selecting an image show an empty div highlighting where the image will be placed
+            const imgPlacementDiv = document.querySelector('#image-placement'); 
+            imgPlacementDiv.style.width = drawRatios.width + 'px';
+            imgPlacementDiv.style.height = drawRatios.height + 'px';
+            imgPlacementDiv.style.display = "block";
+            //update the image 'preview' div position on mopusemove
+            canvas.addEventListener('mousemove', updateImagePlacementDiv);
+            //place the image on the canvas
+            canvas.addEventListener('click',imagePlaceClick);
+        };
+        //set the image src to trigger the load
+        imageData.src = e.target.result;
+    };
+    //pass the data to the filereader
+    fReader.readAsDataURL(uploadedImage);
+}
+
+//after selecting an image show an empty div highlighting where the image will be placed
+function updateImagePlacementDiv(e){
+    const imgPlacementDiv = document.querySelector('#image-placement'); 
+    const x = e.clientX;
+    const y = e.clientY;
+    imgPlacementDiv.style.top = y + 'px';
+    imgPlacementDiv.style.left = x + 'px';
+}
+
+//get the x and Y position of the click, hide the preview div again and remove the event listeners
+function imagePlaceClick(e){
+    const x = e.clientX - 70;
+    const y = e.clientY - 25;
+    loadImageOntoCanvas(imageData,x,y);
+    canvas.removeEventListener('click', imagePlaceClick);
+    canvas.removeEventListener('mousemove', updateImagePlacementDiv);
+    document.querySelector('#image-placement').style.display = "none";
+}
+
+//put the image on the canvas
+function loadImageOntoCanvas(image, x, y) {
+    const drawRatios = calculateImageRatios(image.width,image.height);
+
+    ctx.drawImage(image, x, y, drawRatios.width, drawRatios.height);
+}
+
+//cresize the image and 'preview' if required.
+function calculateImageRatios(width,height){
+    //set the default value for small images
+    let drawWidth = width;
+    let drawHeight = height;
+    //check if the image is too wide, if so resize the to the canvas width
+    if(width > canvas.width){
+        ratio = canvas.width / width;
+        drawWidth = canvas.width;
+        drawHeight = height * ratio;
+    }
+    //check if the imagge is too tall, if so resize to the canvas height
+    if(height > canvas.height){
+        ratio = canvas.height / height;
+        drawHeight = canvas.height;
+        drawWidth = width * ratio;
+    }
+    //return the new values
+    return {
+        width:drawWidth,
+        height:drawHeight
+    };
 }

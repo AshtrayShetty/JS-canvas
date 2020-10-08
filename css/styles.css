@@ -291,3 +291,14 @@ ul.menu a{
     display:none;
     pointer-events: none; /*Permit to click below this div*/
 }
+
+
+#image-placement{
+    width:0px;
+    height:0px;
+    border:1px dashed #aaa;
+    background-color: rgba(0,0,0,0.05);
+    display:none;
+    position:fixed;
+    pointer-events:none;
+}
